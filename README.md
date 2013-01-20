@@ -40,10 +40,15 @@ Brian tweeted this and it's definitely worth posting here, a very concise rundow
 some decent example code.
 http://www.html5rocks.com/en/tutorials/canvas/notearsgame/
 
+And here's a getting started guide for using CreateJS. There's also plenty of decent examples on the official site,
+though they're mostly examples of the canvas wrapper features.
+I'll try and get a working template before the jam so we have a bit of the boilerplate code out of the way.
+(title screen and maybe a game loop with a sprite attached to keyboard movement)
+http://active.tutsplus.com/tutorials/games/learn-createjs-by-building-an-html5-pong-game/
+
 ###Sound:
-I've done plenty of synth music over the years, and will bring along Fruityloops and a few other little synth 
-programs that we can use to generate audio quickly, as I'm expecting music/sound will likely be only minimally 
-required for these games.
+I'll bring along Fruityloops and a few other little synth programs that we can use to generate audio quickly, 
+music/sound will likely be only minimally used for these games.
 
 
 ##Games:
