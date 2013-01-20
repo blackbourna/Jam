@@ -35,6 +35,11 @@ Ken
 
 (no last names people, this is the internet!)
 
+##Game Programming Tutorials
+Brian tweeted this and it's definitely worth posting here, a very concise rundown of how a game loop works, and 
+some decent example code.
+http://www.html5rocks.com/en/tutorials/canvas/notearsgame/
+
 ###Sound:
 I've done plenty of synth music over the years, and will bring along Fruityloops and a few other little synth 
 programs that we can use to generate audio quickly, as I'm expecting music/sound will likely be only minimally 
@@ -44,11 +49,11 @@ required for these games.
 ##Games:
 As far as game ideas, right now the plan is to compile as many single-sentence ideas for minigames we can get (think 
 stuff that takes anywhere from 30min to 3 hours) and we'll take the list to the jam and pump out the games by splitting
-into groups of 2-3 and going at them for a few hours, then switching to something else, whether it's done or not. The 
+into groups of 2-3 and going at them for a few hours (3 hours?), then switching to something else, whether it's done or not. The 
 idea being that we should hopefully have more rought stuff to show off rather than any one particularly polished work.
 
 ##Rough Game Ideas:
-
+Add to this as ideas come.
 * accelerometer bowling game, straight top-down, use html5 transform to fix perspective
 * lunar lander ripoff
 * jump on turtle?
