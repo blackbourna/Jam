@@ -46,6 +46,10 @@ I'll try and get a working template before the jam so we have a bit of the boile
 (title screen and maybe a game loop with a sprite attached to keyboard movement)
 http://active.tutsplus.com/tutorials/games/learn-createjs-by-building-an-html5-pong-game/
 
+And an article on using Flash to generate spritesheets for CreateJS
+http://www.fabiobiondi.com/blog/2012/08/createjs-zoe-create-spritesheets-in-adobe-flash-for-easeljs/
+http://www.createjs.com/#!/Zoe
+
 ###Sound:
 I'll bring along Fruityloops and a few other little synth programs that we can use to generate audio quickly, 
 music/sound will likely be only minimally used for these games.
