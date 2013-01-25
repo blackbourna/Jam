@@ -5,13 +5,8 @@ Main = function() {
      */
     this.init = function() {
         /* Link Canvas */
-        
         this.canvas = document.getElementById('canvas');
         var stage = new Stage(canvas);
-        stage.mouseEventsEnabled = true;
-        stage.onMouseDown = function() {};
-        stage.onMouseMove = function() {};
-        stage.onMouseUp = function() {};
         /* Set The Flash Plugin for browsers that don't support SoundJS */
         SoundJS.FlashPlugin.BASE_PATH = "assets/soundjs_flashplugin";
         if (!SoundJS.checkPlugin(true)) {
@@ -22,7 +17,7 @@ Main = function() {
         var sndDir = "assets/audio/";
         var manifest = [
             {src: imgDir+"paddle.png", id:"player"},
-            {src: sndDir+"hit.mp3|"+sndDir+"/hit.ogg", id:"hit"}
+            {src: sndDir+"hit.mp3|"+sndDir+"hit.ogg", id:"hit"}
         ];
 
 
@@ -35,20 +30,13 @@ Main = function() {
         preloader.onFileLoad = preloadHandler.handleFileLoad;
         preloader.loadManifest(manifest, stage);
     }
-
-    // Main Loop
-
-    this.update = function() {
-        alert('update');
-    }
 };
 
 PreloaderHandler = function(manifest, stage) {
     var totalLoaded = 0;
     var self = this;
     var progress = 0;
-    var progressText = new Text('0%', "12px Arial", "orange");
-    console.log(stage);
+    var progressText = new Text('0%', "12px Arial", Constants.TEXT_COLOR);
     progressText.x = 299;
     progressText.y = 50;
     stage.addChild(progressText);
@@ -65,7 +53,8 @@ PreloaderHandler = function(manifest, stage) {
 
     this.handleComplete = function (event) {
         //triggered when all loading is complete
-        updateProgress(event);
+        stage.removeChild(progressText);
+        new MainMenu(stage).show();
     }
 
     this.handleFileLoad = function(event) {
@@ -95,11 +84,39 @@ PreloaderHandler = function(manifest, stage) {
 }
 
 MainMenu = function(stage) {
-    /* Ticker */
+    this.show = function() {
+        var startText = sprites.player;//new Text('G0!!!!!', "24px Arial", Constants.TEXT_COLOR);
+        startText.maxWidth = 80;
+        startText.x = stage.canvas.width/2 - startText.maxWidth/2;
+        startText.y = stage.canvas.height/2;
+        stage.addChild(startText);
+        
+        startText.onClick = function() {alert('test');}
+        stage.update();
+    }
+}
+
+Player = function(stage) {
+    var sprite = sprites.player;
+    var update = function(e) {
+        if (keydown.right) {
+            sprite.x += 1;
+        }
+        if (keydown.left) {
+            sprite.x -= 1;
+        }
+        if (keydown.up) {
+            sprite.y -= 1;
+        }
+        if (keydown.down) {
+            startText.y += 1;
+        }
+    }
+    ///* Ticker */
     var ticker = new Object();
-    Ticker.setFPS(30);
-    Ticker.addListener(this.stage);
-    Ticker.addListener(tkr, false);
-    Ticker.removeListener(tkr);
-    ticker.tick = self.update;
+    Ticker.setFPS(60);
+    //Ticker.addListener(stage);
+    Ticker.addListener(ticker, false);
+    //Ticker.removeListener(ticker);
+    ticker.tick = update;
 }
