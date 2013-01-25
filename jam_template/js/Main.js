@@ -19,9 +19,7 @@ Main = function() {
             {src: imgDir+"paddle.png", id:"player"},
             {src: sndDir+"hit.mp3|"+sndDir+"hit.ogg", id:"hit"}
         ];
-
-
-
+        
         var preloader = new PreloadJS();
         preloader.installPlugin(SoundJS);
         var preloadHandler = new PreloaderHandler(manifest, stage);
@@ -85,38 +83,73 @@ PreloaderHandler = function(manifest, stage) {
 
 MainMenu = function(stage) {
     this.show = function() {
-        var startText = sprites.player;//new Text('G0!!!!!', "24px Arial", Constants.TEXT_COLOR);
-        startText.maxWidth = 80;
+        var startText = new Text('BEGIN!!!!!', "24px Arial", Constants.TEXT_COLOR);
+        startText.maxWidth = 100;
         startText.x = stage.canvas.width/2 - startText.maxWidth/2;
         startText.y = stage.canvas.height/2;
         stage.addChild(startText);
         
-        startText.onClick = function() {alert('test');}
+        startText.onClick = function() {
+            stage.removeAllChildren();
+            new Game(stage);
+        }
         stage.update();
     }
 }
 
-Player = function(stage) {
-    var sprite = sprites.player;
-    var update = function(e) {
-        if (keydown.right) {
-            sprite.x += 1;
-        }
-        if (keydown.left) {
-            sprite.x -= 1;
-        }
-        if (keydown.up) {
-            sprite.y -= 1;
-        }
-        if (keydown.down) {
-            startText.y += 1;
-        }
-    }
+Game = function(stage) {
+    var player = new Player(stage);
+    var gameObjects = [];
+    gameObjects.push(player);
     ///* Ticker */
     var ticker = new Object();
     Ticker.setFPS(60);
     //Ticker.addListener(stage);
     Ticker.addListener(ticker, false);
     //Ticker.removeListener(ticker);
-    ticker.tick = update;
+    ticker.tick = function() {
+        goog.array.forEach(
+            gameObjects, function(obj) {
+                if (obj.update) {
+                    obj.update();
+                }
+                stage.update();
+            }
+        );
+    };
+}
+
+GameObject = function(stage, sprite, opt_x, opt_y) {
+    if (!sprite || !stage) {
+        alert('Arg missing in GameObject(stage, sprite, opt_x, opt_y)');
+    }
+    if (opt_x) {
+        sprite.x = opt_x;
+    }
+    if (opt_y) {
+        sprite.y = opt_y;
+    }
+    stage.addChild(sprite);
+}
+
+Player = function(stage, opt_x, opt_y) {
+    var sprite = sprites.player;
+    var center = Util.getCenter(stage, sprite);
+    goog.object.extend(this, new GameObject(stage, sprite, center.x, stage.canvas.height * 0.75))
+    this.update = function(e) {
+        if (keydown.right) {
+            sprite.x += 1;
+        }
+        if (keydown.left) {
+            sprite.x -= 1;
+        }
+        if (true) {
+        }
+        //if (keydown.up) {
+        //    sprite.y -= 1;
+        //}
+        //if (keydown.down) {
+        //    sprite.y += 1;
+        //}
+    }
 }
