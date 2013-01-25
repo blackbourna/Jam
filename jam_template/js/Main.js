@@ -103,15 +103,15 @@ Game = function(stage) {
     gameObjects.push(player);
     ///* Ticker */
     var ticker = new Object();
-    Ticker.setFPS(60);
+    Ticker.setFPS(Constants.FRAME_RATE);
     //Ticker.addListener(stage);
     Ticker.addListener(ticker, false);
     //Ticker.removeListener(ticker);
-    ticker.tick = function() {
+    ticker.tick = function(e) {
         goog.array.forEach(
             gameObjects, function(obj) {
                 if (obj.update) {
-                    obj.update();
+                    obj.update(e);
                 }
                 stage.update();
             }
@@ -136,14 +136,31 @@ Player = function(stage, opt_x, opt_y) {
     var sprite = sprites.player;
     var center = Util.getCenter(stage, sprite);
     goog.object.extend(this, new GameObject(stage, sprite, center.x, stage.canvas.height * 0.75))
+    var health = 1;
+    var bullets = [];
+    var fire_rate = 10;
+    var last_fired = Ticker.getTicks();
+    var bullet_vector = -20;
+    var ship_speed = 3;
     this.update = function(e) {
+        goog.array.forEach(
+            bullets, function(obj) {
+                obj.update();
+            }
+        );
         if (keydown.right) {
-            sprite.x += 1;
+            sprite.x += ship_speed;
         }
         if (keydown.left) {
-            sprite.x -= 1;
+            sprite.x -= ship_speed;
         }
-        if (true) {
+        if (!health) {
+            alert('you are now dead.');
+        }
+        if (keydown.space && Ticker.getTicks() - last_fired >= fire_rate) {
+            SoundJS.play('hit');
+            bullets.push(new Bullet(stage, sprite, bullet_vector));
+                    last_fired = Ticker.getTicks();
         }
         //if (keydown.up) {
         //    sprite.y -= 1;
@@ -152,4 +169,19 @@ Player = function(stage, opt_x, opt_y) {
         //    sprite.y += 1;
         //}
     }
+}
+
+Bullet = function(stage, sprite_origin, bullet_vector) {
+    var sprite = goog.object.clone(sprites.player);
+    var x = sprite_origin.x + sprite_origin.image.width/2;
+    var y = sprite_origin.y - sprite_origin.image.height/2;
+    goog.object.extend(this, new GameObject(stage, sprite, x, y))
+    this.update = function(e) {
+        sprite.y += bullet_vector;
+    }
+}
+
+Enemy = function(stage, sprite_origin, bullet_vector) {
+    var sprite = goog.object.clone(sprites.player);
+    goog.object.extend(this, new GameObject(stage, sprite, x, y))
 }
