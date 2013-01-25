@@ -138,9 +138,9 @@ Player = function(stage, opt_x, opt_y) {
     goog.object.extend(this, new GameObject(stage, sprite, center.x, stage.canvas.height * 0.75))
     var health = 1;
     var bullets = [];
-    var fire_rate = 10;
+    var fire_rate = 5;
     var last_fired = Ticker.getTicks();
-    var bullet_vector = -20;
+    var bullet_vector = -10;
     var ship_speed = 3;
     this.update = function(e) {
         goog.array.forEach(
