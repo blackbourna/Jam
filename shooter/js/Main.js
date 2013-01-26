@@ -207,7 +207,7 @@ Player = function(stage, opt_x, opt_y) {
                 bullet_dir =0;
                 break;
         }
-        if (keydown.space && Ticker.getTicks() - last_fired >= (fire_rate /bullet_level)) {
+        if (keydown.space && Ticker.getTicks() - last_fired >= (fire_rate/bullet_level)) {
             SoundJS.play('hit');
             subObjects.push(new Bullet(stage, sprite, bullet_vector, bullet_dir, bullet_level));
             last_fired = Ticker.getTicks();
@@ -244,6 +244,7 @@ PowerUp = function(stage, sprite_origin, powerup_vector) {
     this.tag = "PowerUp";
 	var scale = 0.01;
     this.update = function(e) {
+		if (!enabled) return;
         sprite.y += powerup_vector;
         sprite.x = sprite.x + (5*Math.cos(sprite.y/60));
 		sprite.scaleX += scale * 5;
@@ -256,14 +257,14 @@ PowerUp = function(stage, sprite_origin, powerup_vector) {
 			return;
         }
 		var playerSprite = Globals.player.getSprite();
-		var pt = playerSprite.globalToLocal(sprite.x, sprite.y);
-		if (playerSprite.hitTest(pt.x, pt.y)) {
-			alert('test');
+		var pt = sprite.globalToLocal(playerSprite.x, playerSprite.y);
+		if (sprite.hitTest(pt.x, pt.y)) {
 			self.hit(1);
 			Globals.player.powerUp();
+			enabled = false;
 		}
     }
-    
+	var enabled = true;
     Globals.gameObjects.push(this);
 }
 
