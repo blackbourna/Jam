@@ -6,11 +6,11 @@ LevelObjects = {
 }
 var LevelObjectsLength = Util.getObjectLength(LevelObjects);
 Level = [];
-var gameLength = 1e5;
+var gameLength = 15;
 //var gameSpeed = 25;
-var objProbability = 1;
+var objProbability = 0.5;
 var probabilityStep = 0.1;
-for (var x = 0; x < gameLength; x += 1e4) {//Math.random() * (gameSpeed -= 0.001)) {
+for (var x = 0; x < gameLength; x += 1.5) {//Math.random() * (gameSpeed -= 0.001)) {
     if (Math.random() < objProbability) {
         var row = [];
         for (var y = 0; y < 10; y++) {
@@ -18,7 +18,7 @@ for (var x = 0; x < gameLength; x += 1e4) {//Math.random() * (gameSpeed -= 0.001
         }
         Level.push(
             {
-                timestamp: x + (Math.random() * 50),
+                timestamp: x * 1e4 + (Math.random() * 50),
                 objects: row
             }
         );
