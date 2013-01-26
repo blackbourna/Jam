@@ -52,7 +52,8 @@ PreloaderHandler = function(manifest, stage) {
     this.handleComplete = function (event) {
         //triggered when all loading is complete
         stage.removeChild(progressText);
-        new MainMenu(stage).show();
+        //new MainMenu(stage).show();
+        new Game(stage);
     }
 
     this.handleFileLoad = function(event) {
@@ -99,8 +100,12 @@ MainMenu = function(stage) {
 
 Game = function(stage) {
     var player = new Player(stage);
+    var levelhandler = new LevelHandler(stage, this);
     var gameObjects = [];
+    Globals.player = player;
+    Globals.gameObjects = gameObjects;
     gameObjects.push(player);
+    gameObjects.push(levelhandler, this);
     ///* Ticker */
     var ticker = new Object();
     Ticker.setFPS(Constants.FRAME_RATE);
@@ -117,6 +122,9 @@ Game = function(stage) {
             }
         );
     };
+    this.addGameObject = function(obj) {
+        gameObjects.push(obj);
+    }
 }
 
 GameObject = function(stage, sprite, opt_x, opt_y) {
@@ -130,6 +138,7 @@ GameObject = function(stage, sprite, opt_x, opt_y) {
         sprite.y = opt_y;
     }
     stage.addChild(sprite);
+    this.getSprite = function() { return sprite; }
 }
 
 Player = function(stage, opt_x, opt_y) {
@@ -138,10 +147,11 @@ Player = function(stage, opt_x, opt_y) {
     goog.object.extend(this, new GameObject(stage, sprite, center.x, stage.canvas.height * 0.75))
     var health = 1;
     var bullets = [];
-    var fire_rate = 5;
+    var fire_rate = 1;
     var last_fired = Ticker.getTicks();
     var bullet_vector = -10;
-    var ship_speed = 3;
+    var ship_speed = 5;
+    this.getBullets = function() { return bullets }
     this.update = function(e) {
         goog.array.forEach(
             bullets, function(obj) {
@@ -159,9 +169,21 @@ Player = function(stage, opt_x, opt_y) {
         }
         if (keydown.space && Ticker.getTicks() - last_fired >= fire_rate) {
             SoundJS.play('hit');
-            bullets.push(new Bullet(stage, sprite, bullet_vector));
-                    last_fired = Ticker.getTicks();
+            bullets.push(new Bullet(stage, sprite, null));
+            bullets.push(new Bullet(stage, sprite, null));
+            bullets.push(new Bullet(stage, sprite, null));
+            last_fired = Ticker.getTicks();
         }
+        goog.array.map(bullets, function(obj) {
+            if (obj.getSprite().x < 0 || 
+                obj.getSprite().x > stage.canvas.width ||
+                obj.getSprite().y < 0 ||
+                obj.getSprite().y > stage.canvas.height) {
+                    stage.removeChild(obj.getSprite());
+                    goog.array.remove(bullets, obj);
+            }
+            
+        });
         //if (keydown.up) {
         //    sprite.y -= 1;
         //}
@@ -171,17 +193,56 @@ Player = function(stage, opt_x, opt_y) {
     }
 }
 
-Bullet = function(stage, sprite_origin, bullet_vector) {
+Bullet = function(stage, sprite_origin, opt_bullet_vector) {
     var sprite = goog.object.clone(sprites.player);
     var x = sprite_origin.x + sprite_origin.image.width/2;
     var y = sprite_origin.y - sprite_origin.image.height/2;
+    SoundJS.play('hit');
     goog.object.extend(this, new GameObject(stage, sprite, x, y))
+    if (!opt_bullet_vector) {
+        opt_bullet_vector = {};
+        //opt_bullet_vector.x = Math.random() * 10 * (Math.);
+        opt_bullet_vector.x = Math.random() * 25;
+        opt_bullet_vector.y = Math.random() * 100;
+        if (Math.random() < 0.5) {
+            opt_bullet_vector.x *= -1;
+        }
+        if (Math.random() < 0.5) {
+            opt_bullet_vector.y *= -1;
+        }
+    } 
+    if (!opt_bullet_vector.x) {
+        opt_bullet_vector.x = 0;
+    }
+    if (!opt_bullet_vector.y) {
+        opt_bullet_vector.y = 0;
+    }
     this.update = function(e) {
-        sprite.y += bullet_vector;
+        sprite.x += opt_bullet_vector.x;
+        sprite.y += opt_bullet_vector.y;
+        opt_bullet_vector.y += 10;
     }
 }
 
-Enemy = function(stage, sprite_origin, bullet_vector) {
+Enemy = function(stage, opt_x, opt_y) {
     var sprite = goog.object.clone(sprites.player);
-    goog.object.extend(this, new GameObject(stage, sprite, x, y))
+    var self = this;
+    goog.object.extend(this, new GameObject(stage, sprite, opt_x, -sprite.image.height));
+    this.update = function(e) {
+        sprite.y += 10;
+        if (sprite.y > stage.canvas.height) {
+            stage.removeChild(sprite);
+            goog.array.remove(Globals.gameObjects, self);
+        }
+        var bullets = Globals.player.getBullets();
+        goog.array.map(bullets, function(obj) {
+            var bulletSprite = obj.getSprite();
+            var pt = sprite.globalToLocal(bulletSprite.x, bulletSprite.y);
+            //console.log(bulletSprite.x, bulletSprite.y, obj.getSprite());
+            if (sprite.hitTest(pt.x, pt.y)) {
+                stage.removeChild(sprite);
+                goog.array.remove(Globals.gameObjects, obj);
+            }
+        });
+    }
 }
