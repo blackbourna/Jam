@@ -6,20 +6,26 @@ LevelObjects = {
 }
 var LevelObjectsLength = Util.getObjectLength(LevelObjects);
 Level = [];
-for (var x = 0; x < 120000; x += Math.random() * 2500) {
-    if (Math.random() > 0.15) {
+var gameLength = 1e5;
+//var gameSpeed = 25;
+var objProbability = 1;
+var probabilityStep = 0.1;
+for (var x = 0; x < gameLength; x += 1e4) {//Math.random() * (gameSpeed -= 0.001)) {
+    if (Math.random() < objProbability) {
         var row = [];
         for (var y = 0; y < 10; y++) {
-            row.push(Math.random() > 0.15 ? 0 : Math.min(Math.floor(Math.random() * (LevelObjectsLength)), LevelObjectsLength));
+            row.push(Math.min(Math.floor(Math.random() * (LevelObjectsLength)), LevelObjectsLength));
         }
         Level.push(
             {
-                timestamp: x,
+                timestamp: x + (Math.random() * 50),
                 objects: row
             }
         );
     }
+    //objProbability += probabilityStep;
 }
+console.log(Level);
 LevelStack = [];
 for (var y = Level.length - 1; y >= 0; y--) {
     LevelStack.push(Level[y]);
@@ -46,7 +52,7 @@ LevelHandler = function(stage, game) {
                         obj = new SpaceInvaderEnemy(stage, x * tilesize);
                     break;
                     case LevelObjects.POWER_UP:
-                        obj = new PowerUp(stage, x * tilesize);
+                        obj = new PowerUp(stage, x * tilesize, Math.random() * 5);
                     break;
                 }
                 if (obj) {
