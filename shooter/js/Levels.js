@@ -8,7 +8,7 @@ var levelObjectsLength = Util.getObjectLength(LevelObjects);
 
 var deltaTime = 0;
 var delay = 50;
-var enemyFactor = 0.1;
+var enemyFactor = 0.5;
 LevelHandler = function(stage, game) {
     this.update = function(e) {
 		var row = null;
@@ -16,7 +16,7 @@ LevelHandler = function(stage, game) {
 			row = new Array(Math.floor(Math.random() * 10));
 			for (var x = 0; x < row.length; x++) {
 				if (Math.random() > enemyFactor) {
-					enemyFactor += 1e-2
+					enemyFactor -= 1e-2;
 					row[x] = Math.floor(Math.random() * levelObjectsLength + 1);
 				}
 			}

@@ -246,7 +246,7 @@ PowerUp = function(stage, sprite_origin, powerup_vector) {
     this.update = function(e) {
 		if (!enabled) return;
         sprite.y += powerup_vector;
-        sprite.x = sprite.x + (5*Math.cos(sprite.y/60));
+        sprite.x = sprite.x + (5*Math.cos(sprite.y/20));
 		sprite.scaleX += scale * 5;
 		sprite.scaleY += scale;
 		if (sprite.scaleY > 0.75 || sprite.scaleY < 0.5) {
@@ -333,6 +333,7 @@ Enemy = function(stage, opt_x, opt_y) {
     this.tag = "Enemy";
     this.update = function(e) {
         sprite.y += 10;
+		sprite.x += (10*Math.sin(sprite.y/180))
         if (sprite.y > stage.canvas.height) {
             stage.removeChild(sprite);
             goog.array.remove(Globals.gameObjects, self);
