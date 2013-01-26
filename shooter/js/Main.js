@@ -128,6 +128,7 @@ Game = function(stage) {
         gameObjects.push(obj);
     }
 }
+
 GameObject = function(stage, sprite, obj, opt_x, opt_y) {
     if (!sprite || !stage) {
         alert('Arg missing in GameObject(stage, sprite, opt_x, opt_y)');
@@ -143,7 +144,7 @@ GameObject = function(stage, sprite, obj, opt_x, opt_y) {
 	sprite.regY = 50;
 	this.health = 1;
 	this.hit = function(damage) {
-		this.health-=damage;
+        this.health -= damage;
 		if (this.health < 1) {
 			console.log(obj.id, obj.tag);
             stage.removeChild(sprite);
@@ -168,36 +169,62 @@ Player = function(stage, opt_x, opt_y) {
     var ship_speed = 10;
     var self = this;
     this.tag = "Player";
+
     this.getBullets = function() { return goog.array.filter(subObjects, function(obj) {
             return obj.tag == "Bullet";
         });
     }
+
 	this.powerUp = function() {
 		bullet_level++;
 	}
+
     this.update = function(e) {
-        if (keydown.right && sprite.x <= (1024-sprite.image.width)) {
+        
+        /* PLAYER MOVEMENT */
+
+        // move right, don't go past right border
+        if (keydown.right && sprite.x <= (canvas.width - sprite.image.width)) {
             sprite.x += ship_speed;
         }
-        if (keydown.left && sprite.x >= 0) {
+        
+        // move left, don't go past left border
+        if (keydown.left && sprite.x >= sprite.image.width) {
             sprite.x -= ship_speed;
         }
+
+        // move up, don't go past "invisible border" just above mid-canvas
+        if (keydown.up && sprite.y >= (canvas.height / 3 + sprite.image.height)) {
+            sprite.y -= ship_speed;
+        }
+
+        // move down, don't go past bottom border
+        if (keydown.down && sprite.y <= (canvas.height - sprite.image.height / 2)) {
+            sprite.y += ship_speed;
+        }
+
+        /* BULLET POWERUPS */
+
+        // TODO: 
+        // Make powerup drop type random
+        // Move "bullet_dir" to the powerup object, then assign to "bullet_level" on collision
+        // 
     
         switch (bullet_level) {
             case 1:
                 bullet_dir = 0;
                 break;
             case 2:
-                if (bullet_dir==2){
+                if (bullet_dir == 2) {
                     bullet_dir = -2;
                 } else {
                    bullet_dir = 2;  
                 }
                 break;
             case 3:
-                if (bullet_dir == 3){
+                if (bullet_dir == 3) {
                     bullet_dir = -3;
-                } else if (bullet_dir == -3){
+                } else if (bullet_dir == -3) {
                    bullet_dir = 0;  
                 } else {
                     bullet_dir =3;
@@ -207,11 +234,15 @@ Player = function(stage, opt_x, opt_y) {
                 bullet_dir =0;
                 break;
         }
-        if (keydown.space && Ticker.getTicks() - last_fired >= (fire_rate/bullet_level)) {
+
+        /* SHOOTING MAD BULLETS */
+
+        if (keydown.space && Ticker.getTicks() - last_fired >= (fire_rate / bullet_level)) {
             SoundJS.play('hit');
             subObjects.push(new Bullet(stage, sprite, bullet_vector, bullet_dir, bullet_level));
             last_fired = Ticker.getTicks();
         }
+
         goog.array.map(subObjects, function(obj) {
             if (obj.getSprite().x < 0 || 
                 obj.getSprite().x > stage.canvas.width ||
@@ -223,13 +254,8 @@ Player = function(stage, opt_x, opt_y) {
             }
             
         });
-        //if (keydown.up) {
-        //    sprite.y -= 1;
-        //}
-        //if (keydown.down) {
-        //    sprite.y += 1;
-        //}
     }
+
     Globals.gameObjects.push(this);
 }
 
