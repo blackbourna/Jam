@@ -141,12 +141,14 @@ Player = function(stage, opt_x, opt_y) {
     var health = 1;
     var bullets = [];
     var powerups = [];
-    var fire_rate = 5;
-    var powerup_rate = 50;
+    var fire_rate = 10;
+    var bullet_level = 3;
+    var powerup_rate = 500;
     var last_powerup = Ticker.getTicks();
-    var powerup_vector = 10; 
+    var powerup_vector = 2; 
     var last_fired = Ticker.getTicks();
     var bullet_vector = -10;
+    var bullet_dir = 2;
     var ship_speed = 3;
     this.update = function(e) {
         goog.array.forEach(
@@ -163,9 +165,35 @@ Player = function(stage, opt_x, opt_y) {
         if (!health) {
             alert('you are now dead.');
         }
-        if (keydown.space && Ticker.getTicks() - last_fired >= fire_rate) {
+        
+    
+        switch (bullet_level) {
+            case 1:
+                bullet_dir = 0;
+                break;
+            case 2:
+                if (bullet_dir==2){
+                    bullet_dir = -2;
+                } else {
+                   bullet_dir = 2;  
+                }
+                break;
+            case 3:
+                if (bullet_dir == 3){
+                    bullet_dir = -3;
+                } else if (bullet_dir == -3){
+                   bullet_dir = 0;  
+                } else {
+                    bullet_dir =3;
+                }
+                break;
+            default:
+                bullet_dir =0;
+                break;
+        }
+        if (keydown.space && Ticker.getTicks() - last_fired >= (fire_rate /bullet_level)) {
             SoundJS.play('hit');
-            bullets.push(new Bullet(stage, sprite, bullet_vector));
+            bullets.push(new Bullet(stage, sprite, bullet_vector, bullet_dir, bullet_level));
                     last_fired = Ticker.getTicks();
         }
         if (Ticker.getTicks() - last_powerup >= powerup_rate){
@@ -186,21 +214,27 @@ Player = function(stage, opt_x, opt_y) {
 
 PowerUp = function(stage, sprite_origin, powerup_vector) {
     var sprite = goog.object.clone(sprites.player);
-    var x = Math.random() * 1024;
+    var x = Math.random() * 924 + 100;
     var y = -20;
     goog.object.extend(this, new GameObject(stage, sprite, x, y))
     Globals.gameObjects.push(this);
     this.update = function(e) {
-        sprite.y += powerup_vector;;
+        sprite.y += powerup_vector;
+        sprite.x = sprite.x + (5*Math.cos(sprite.y/60));
     }
 }
-Bullet = function(stage, sprite_origin, bullet_vector) {
-    var sprite = goog.object.clone(sprites.player);
-    var x = sprite_origin.x + sprite_origin.image.width/2;
+Bullet = function(stage, sprite_origin, bullet_vector, bullet_dir, bullet_level) {
+    if (bullet_level == 1) {
+        var sprite = goog.object.clone(sprites.player);
+    } else {
+        var sprite = goog.object.clone(sprites.player); //change the texture of the laser
+    }
+    var x = sprite_origin.x;
     var y = sprite_origin.y - sprite_origin.image.height/2;
     goog.object.extend(this, new GameObject(stage, sprite, x, y));
     Globals.gameObjects.push(this);
     this.update = function(e) {
+        sprite.x+=bullet_dir;
         sprite.y += bullet_vector;
     }
 }
