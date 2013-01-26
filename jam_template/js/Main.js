@@ -99,10 +99,8 @@ MainMenu = function(stage) {
 
 Game = function(stage) {
     var player = new Player(stage);
-    var enemy = new SpaceInvaderEnemy(stage);
     var gameObjects = [];
     gameObjects.push(player);
-    gameObjects.push(enemy);
     ///* Ticker */
     var ticker = new Object();
     Ticker.setFPS(Constants.FRAME_RATE);
@@ -186,46 +184,7 @@ Bullet = function(stage, sprite_origin, bullet_vector) {
     }
 }
 
-SpaceInvaderEnemy = function(stage, sprite_origin, bullet_vector) {
+Enemy = function(stage, sprite_origin, bullet_vector) {
     var sprite = goog.object.clone(sprites.player);
-    var center = Util.getCenter(stage, sprite);
-    goog.object.extend(this, new GameObject(stage, sprite, center.x, stage.canvas.height * 0.05))
-    var health = 1;
-    //var bullets = [];
-    //var fire_rate = 5;
-    //var last_fired = Ticker.getTicks();
-    //var bullet = -10;
-    var ship_speed = 4;
-    var horizontalDirection = 'left';
-
-    this.update = function(e) {
-        //goog.array.forEach(
-        //    bullets, function(obj) { 
-        //        obj.update(); 
-        //    }
-        //);
-
-        // move the enemy left or right
-        if (horizontalDirection == 'right') {
-            sprite.x += ship_speed;
-        }
-        else if (horizontalDirection == 'left') {
-            sprite.x -= ship_speed;
-        }
-
-        // check the borders, if hit, reverse the direction and move down
-        if (sprite.x >= (1024 - sprite.image.width)) {
-            horizontalDirection = 'left';
-            sprite.y += 15;
-        }
-        else if (sprite.x <= 0) {
-            horizontalDirection = 'right';
-            sprite.y += 15;
-        }
-
-        // check bottom of sprite for collision with player
-        // need brian's collision detection/global sprite shit stuff.
-
- 
-    }
+    goog.object.extend(this, new GameObject(stage, sprite, x, y))
 }
