@@ -9,6 +9,8 @@ var levelObjectsLength = Util.getObjectLength(LevelObjects);
 var deltaTime = 0;
 var delay = 50;
 var enemyFactor = 0.5;
+var powerupdelay = 1000;
+var powerupDelta = 0;
 LevelHandler = function(stage, game) {
     this.update = function(e) {
 		var row = null;
@@ -35,7 +37,11 @@ LevelHandler = function(stage, game) {
 					obj = new SpaceInvaderEnemy(stage, x * tilesize);
 				break;
 				case LevelObjects.POWER_UP:
-					obj = new PowerUp(stage, x * tilesize, Math.random() * 5);
+					if (Ticker.getTicks() - powerupDelta >= powerupdelay) {
+						obj = new PowerUp(stage, x * tilesize, Math.random() * 5);
+						powerupdelay+=100;
+						powerupDelta = Ticker.getTicks();
+					}
 				break;
 			}
 			if (obj) {
