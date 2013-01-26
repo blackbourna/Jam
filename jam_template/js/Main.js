@@ -162,12 +162,15 @@ Player = function(stage, opt_x, opt_y) {
             bullets.push(new Bullet(stage, sprite, bullet_vector));
                     last_fired = Ticker.getTicks();
         }
-        //if (keydown.up) {
-        //    sprite.y -= 1;
-        //}
-        //if (keydown.down) {
-        //    sprite.y += 1;
-        //}
+        //stop at the sides
+        console.log(sprite);
+        //sprite.img.width = 1000;
+        if (sprite.x >= (1024-sprite.image.width)) {
+            sprite.x = 1023-sprite.image.width;
+        }
+        if (sprite.x <= 0) {
+            sprite.x = 1;
+        }
     }
 }
 
