@@ -98,11 +98,10 @@ MainMenu = function(stage) {
 }
 
 Game = function(stage) {
+    var gameObjects = [];
+    Globals.gameObjects = gameObjects;
     var player = new Player(stage);
     var enemy = new SpaceInvaderEnemy(stage);
-    var gameObjects = [];
-    gameObjects.push(player);
-    gameObjects.push(enemy);
     ///* Ticker */
     var ticker = new Object();
     Ticker.setFPS(Constants.FRAME_RATE);
@@ -120,6 +119,7 @@ Game = function(stage) {
         );
     };
 }
+
 
 GameObject = function(stage, sprite, opt_x, opt_y) {
     if (!sprite || !stage) {
@@ -140,7 +140,11 @@ Player = function(stage, opt_x, opt_y) {
     goog.object.extend(this, new GameObject(stage, sprite, center.x, stage.canvas.height * 0.75))
     var health = 1;
     var bullets = [];
+    var powerups = [];
     var fire_rate = 5;
+    var powerup_rate = 50;
+    var last_powerup = Ticker.getTicks();
+    var powerup_vector = 10; 
     var last_fired = Ticker.getTicks();
     var bullet_vector = -10;
     var ship_speed = 3;
@@ -164,9 +168,12 @@ Player = function(stage, opt_x, opt_y) {
             bullets.push(new Bullet(stage, sprite, bullet_vector));
                     last_fired = Ticker.getTicks();
         }
+        if (Ticker.getTicks() - last_powerup >= powerup_rate){
+            powerups.push(new PowerUp(stage, sprite, powerup_vector))
+            last_powerup = Ticker.getTicks();
+        }
         //stop at the sides
-        console.log(sprite);
-        //sprite.img.width = 1000;
+        //console.log(sprite);
         if (sprite.x >= (1024-sprite.image.width)) {
             sprite.x = 1023-sprite.image.width;
         }
@@ -174,13 +181,25 @@ Player = function(stage, opt_x, opt_y) {
             sprite.x = 1;
         }
     }
+    Globals.gameObjects.push(this);
 }
 
+PowerUp = function(stage, sprite_origin, powerup_vector) {
+    var sprite = goog.object.clone(sprites.player);
+    var x = Math.random() * 1024;
+    var y = -20;
+    goog.object.extend(this, new GameObject(stage, sprite, x, y))
+    Globals.gameObjects.push(this);
+    this.update = function(e) {
+        sprite.y += powerup_vector;;
+    }
+}
 Bullet = function(stage, sprite_origin, bullet_vector) {
     var sprite = goog.object.clone(sprites.player);
     var x = sprite_origin.x + sprite_origin.image.width/2;
     var y = sprite_origin.y - sprite_origin.image.height/2;
-    goog.object.extend(this, new GameObject(stage, sprite, x, y))
+    goog.object.extend(this, new GameObject(stage, sprite, x, y));
+    Globals.gameObjects.push(this);
     this.update = function(e) {
         sprite.y += bullet_vector;
     }
@@ -200,9 +219,9 @@ SpaceInvaderEnemy = function(stage, sprite_origin, bullet_vector) {
 
     this.update = function(e) {
         //goog.array.forEach(
-        //    bullets, function(obj) { 
-        //        obj.update(); 
-        //    }
+        // bullets, function(obj) {
+        // obj.update();
+        // }
         //);
 
         // move the enemy left or right
@@ -224,8 +243,7 @@ SpaceInvaderEnemy = function(stage, sprite_origin, bullet_vector) {
         }
 
         // check bottom of sprite for collision with player
-        // need brian's collision detection/global sprite shit stuff.
-
- 
+        // need brian's collision detection/global sprite shit stuff. 
     }
+    Globals.gameObjects.push(this);
 }
