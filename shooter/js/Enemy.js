@@ -127,7 +127,7 @@ Boss = function(stage){
 	};
 	this.mode = {//basic,laser, heatguided
 		basic: {
-				base_shot_interval : 25,//25 frames between shots
+				base_shot_interval : 15,//25 frames between shots
 				base_shot_variance: 10,//10 frame variance
 				shot_interval : 0,
 				mode_interval : 600,

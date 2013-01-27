@@ -11,8 +11,18 @@ var delay = 50;
 var enemyFactor = 0.5;
 var powerupdelay = 0;
 var powerupDelta = 0;
+var bossEntryDelta = 500;
+var bossActive = false;
+
 LevelHandler = function(stage, game) {
     this.update = function(e) {
+		if (bossActive)
+			return;
+		console.log(Ticker.getTicks());
+		if (Ticker.getTicks() > bossEntryDelta){
+			bossActive = true;
+			Globals.gameObjects.push(new Boss(stage));
+		}
 		var row = null;
         if (Ticker.getTicks() - deltaTime >= delay) {
 			row = new Array(Math.floor(Math.random() * 10));
