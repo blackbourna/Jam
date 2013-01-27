@@ -153,21 +153,26 @@ Game = function(stage) {
 
 Background = function(stage) {
 
+
     var sprite = sprites.background;
     var y = -6200 + 1024;///sprites.background.height
     var x = 0;///sprites.background.height
     var background_vector = 4;
-    
+    var superawesomevariableCheese = 1.01;
+    var notsoawesomeFormage = 1.1;
+
     goog.object.extend(this, new GameObject(stage, sprite, this, 0, y));
     this.update = function(e){
-        
+
         y += background_vector;
         sprite.x += Math.cos(y/50)*2;
-        if (y > -500) {
-            sprite.y += Math.abs(Math.cos(y/100))*8;
-        } else {
-            sprite.y += Math.abs(Math.cos(y/100))*8;
+        notsoawesomeFormage *= superawesomevariableCheese;
+        notsoawesomeFormage = notsoawesomeFormage > 100 ? 1:notsoawesomeFormage;
+        sprite.y += Math.abs(Math.cos(y/100))*notsoawesomeFormage;
+        if (sprite.y > -100) {
+            sprite.y = -6000;
         }
+        console.log(sprite.y);
     }   
 
     Globals.gameObjects.push(this);
