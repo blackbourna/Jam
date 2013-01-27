@@ -6,7 +6,8 @@ BulletInfo = [
 		x:[0],
 		y:[-10],
 		damage:5,
-		rate: 10
+		rate: 10,
+		sfx: "b"
 	},
 	//1
 	{
@@ -14,7 +15,8 @@ BulletInfo = [
 		x:[0],
 		y:[-10],
 		damage:5,
-		rate: 10
+		rate: 10,
+		sfx: "c"
 	},
 	//2
 	{
@@ -22,7 +24,8 @@ BulletInfo = [
 		x:[-1, 1,],
 		y:[-10,-10],
 		damage:5,
-		rate: 10
+		rate: 10,
+		sfx: "d"
 	},
 	//3
 	{
@@ -30,7 +33,8 @@ BulletInfo = [
 		x:[-5, 0, 5],
 		y:[-10,-10,-10],
 		damage:5,
-		rate: 7
+		rate: 7,
+		sfx: "e"
 	},
 	//4
 	{
@@ -38,7 +42,8 @@ BulletInfo = [
 		x: [0.5, 0, 0.5],
 		y: [-10,-10,-10],
 		damage:5,
-		rate: 1
+		rate: 1,
+		sfx: "f"
 	}
 ]
 
@@ -54,7 +59,7 @@ PowerUp = function(stage, sprite_origin, powerup_vector) {
 		sprites.spreadGun,
 		sprites.fireballGun,
 	]
-	console.log("PowerUp: ",randomSpriteIndex);
+	//console.log("PowerUp: ",randomSpriteIndex);
     var randomSpriteName = bullet_types[randomSpriteIndex];
 	var sprite = goog.object.clone(gunSprites[randomSpriteIndex]);
 	Globals.player.bulletText = randomSpriteName;
@@ -78,12 +83,13 @@ PowerUp = function(stage, sprite_origin, powerup_vector) {
 			self.hit(1);
 			Globals.player.powerUp(randomSpriteIndex, randomSpriteName);
 			enabled = false;
+			var audio = new Audio(sndDir+"sfx/pickupsuccess.wav").play();
 		}
     }
 	var enabled = true;
 }
 
-Bullet = function(stage, sprite_origin, bullet_x, bullet_y, opt_damage) {
+Bullet = function(stage, sprite_origin, bullet_x, bullet_y, opt_damage, opt_bulletInfo) {
     var sprite = goog.object.clone(sprites.bullet);
 	sprite.scaleY = 0.25;
     //var x = sprite_origin.x + sprite_origin.image.width / 3;
@@ -92,7 +98,6 @@ Bullet = function(stage, sprite_origin, bullet_x, bullet_y, opt_damage) {
     var y = sprite_origin.y - sprite.image.height;
     var self = this;
     var booster = 1;
-    SoundJS.play('hit');
     this.tag = "Bullet";
     goog.object.extend(this, new GameObject(stage, sprite, this, x, y));
     this.update = function(e) {

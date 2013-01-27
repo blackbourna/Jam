@@ -1,5 +1,7 @@
 var sprites = [];
 var ids = 0;
+var imgDir = "assets/image/";
+var sndDir = "assets/audio/";
 // Channelling CONTRA http://strategywiki.org/wiki/Contra/Weapons
 // standardRifle = no rapid fire, have to mash the space bar to fire (can't hold down key for continuous fire)
 // machineGun = rapid fire, can hold down space bar to fire continuously (find a nice balance so it's not just a wall of bullets)
@@ -14,15 +16,13 @@ Main = function() {
     this.init = function() {
         /* Link Canvas */
         this.canvas = document.getElementById('canvas');
-        var stage = new Stage(canvas);
+        var stage = new Stage(this.canvas);
         /* Set The Flash Plugin for browsers that don't support SoundJS */
-        SoundJS.FlashPlugin.BASE_PATH = "assets/soundjs_flashplugin";
-        if (!SoundJS.checkPlugin(true)) {
-          alert("Error!");
-          return;
-        }
-        var imgDir = "assets/image/";
-        var sndDir = "assets/audio/";
+        //SoundJS.FlashPlugin.BASE_PATH = "assets/soundjs_flashplugin";
+        //if (!SoundJS.checkPlugin(true)) {
+        //  alert("Error!");
+        //  return;
+        //}
         var manifest = [
             {src: imgDir+"spaceship_new_64.png", id:"player"},
 			//{src: imgDir+"enemyship.png", id:"enemy"},
@@ -32,12 +32,28 @@ Main = function() {
             {src: imgDir+"doubleGunPowerUp.png", id:"doubleGun"},
             {src: imgDir+"spreadGunPowerUp.png", id:"spreadGun"},
             {src: imgDir+"fireballGunPowerUp.png", id:"fireballGun"},
-            {src: imgDir+"background_like_a_mofo.png", id: "background"},
-                 {src: sndDir+"hit.mp3|"+sndDir+"hit.ogg", id:"hit"}
+            {src: imgDir+"background_like_a_mofo.png", id: "background"}
+			//{src: sndDir+"sfx/doubleGun.mp3|"+sndDir+"sfx/doubleGun.ogg", id: "doubleGunMP3"},
+			//{src: sndDir+"sfx/enemyDeath.mp3|"+sndDir+"sfx/enemyDeath.ogg", id: "enemyDeathMP3"},
+			//{src: sndDir+"sfx/fireballGun.mp3|"+sndDir+"sfx/fireballGun.ogg", id: "fireballGunMP3"},
+			//{src: sndDir+"sfx/flameGun.mp3|"+sndDir+"sfx/flameGun.ogg", id: "flameGunMP3"},
+			//{src: sndDir+"sfx/gunA.mp3|"+sndDir+"sfx/gunA.ogg", id: "gunAMP3"},
+			//{src: sndDir+"sfx/gunB.mp3|"+sndDir+"sfx/gunB.ogg", id: "gunBMP3"},
+			//{src: sndDir+"sfx/gunC.mp3|"+sndDir+"sfx/gunC.ogg", id: "gunCMP3"},
+			//{src: sndDir+"sfx/gunD.mp3|"+sndDir+"sfx/gunD.ogg", id: "gunDMP3"},
+			//{src: sndDir+"sfx/hurtEnemy.mp3|"+sndDir+"sfx/hurtEnemy.ogg", id: "hurtEnemyMP3"},
+			//{src: sndDir+"sfx/hurtPlayer.mp3|"+sndDir+"sfx/hurtPlayer.ogg", id: "hurtPlayerMP3"},
+			//{src: sndDir+"sfx/machineGun.mp3|"+sndDir+"sfx/machineGun.ogg", id: "machineGunMP3"},
+			//{src: sndDir+"sfx/playerdeath.mp3|"+sndDir+"sfx/playerdeath.ogg", id: "playerdeathMP3"},
+			//{src: sndDir+"sfx/enemyDeath.wav", id: "enemyDeathSnd"},
+			//{src: sndDir+"sfx/powerupA.mp3|"+sndDir+"sfx/powerupA.ogg", id: "powerupAMP3"},
+			//{src: sndDir+"sfx/powerupB.mp3|"+sndDir+"sfx/powerupB.ogg", id: "powerupBMP3"},
+			//{src: sndDir+"sfx/spreadGun.mp3|"+sndDir+"sfx/spreadGun.ogg", id: "spreadGunMP3"},
+			//{src: sndDir+"sfx/standardGun.mp3|"+sndDir+"sfx/standardGun.ogg", id: "standardGunMP3"}
         ];
-        
+		var audio = new Audio(sndDir+"song/song.wav").play();
         var preloader = new PreloadJS();
-        preloader.installPlugin(SoundJS);
+        //preloader.installPlugin(SoundJS);
         var preloadHandler = new PreloaderHandler(manifest, stage);
         preloader.onProgress = preloadHandler.handleProgress;
         preloader.onComplete = preloadHandler.handleComplete;
@@ -72,6 +88,10 @@ PreloaderHandler = function(manifest, stage) {
         //triggered when all loading is complete
         stage.removeChild(progressText);
         //new MainMenu(stage).show();
+			//alert(sndDir+"sfx/gunC.mp3|"+sndDir+"sfx/gunC.ogg");
+			//SoundJS.play('flameGunMP3');
+			//console.log("SOUNDJS");
+			//	console.log(SoundJS);
         new Game(stage);
     }
 
@@ -156,7 +176,7 @@ Background = function(stage) {
 	//sprite.scaleX = 1.1;
     var y = -sprite.image.height+stage.canvas.height;
     var x = 0;
-    var background_vector = 4;
+    var background_vector = 2;
     var superawesomevariableCheese = 1.01;
     var notsoawesomeFormage = 1.1;
     goog.object.extend(this, new GameObject(stage, sprite, this, x, y, 0, 0));
@@ -165,9 +185,9 @@ Background = function(stage) {
     this.update = function(e){
 
 		sprite.x = -Math.abs(Math.cos(sprite.y/50)) * 2;
-		notsoawesomeFormage *= superawesomevariableCheese;
-        notsoawesomeFormage = notsoawesomeFormage > 100 ? 1:notsoawesomeFormage;
-        sprite.y += Math.abs(Math.cos(sprite.y/100))*notsoawesomeFormage;
+		//notsoawesomeFormage *= superawesomevariableCheese;
+        //notsoawesomeFormage = notsoawesomeFormage > 100 ? 1:notsoawesomeFormage;
+        //sprite.y += Math.abs(Math.cos(sprite.y/100))*notsoawesomeFormage;
         if (sprite.y > 0) {
             sprite.y = -sprite.image.height+stage.canvas.height;
         }
