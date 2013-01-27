@@ -29,29 +29,18 @@ Jam
 		explosions
 		sounds
 
-###TODO
-	* CREATE TRELLO BOARD FOR COMPLETION
-	* DONE -- player can move up/down/left/right
-	* DONE -- background images 
-	* SEMI DONE -- sprite assets (player(DONE)/enemies(need more)/powerups(DONE))
-	* DONE -- background movement (scroll down) -- DONE
-	* DONE -- change dimensions to thin long vertical rectangle -- DONE
-	* DONE -- spec out POWERUPS -- (top of main.js)
-	* DONE - calculate score
-	* DONE - display score
+###TODO: GAMEPLAY
 	
-	BULLETS - better graphics
-
 	* collision with player (from enemy/bullet) 
-	* 	- health system
 	* 	- TODO: audible/visual notification when you get hit
 	* 	- TODO: exposion when he dies
-	* 	- TODO: Refine collision detection
-	
+	* 	- TODO: Refine collision detection 
+			- powerups are too difficult to get
+			- enemies are too easy to hit	
 	* set level length (time)
 	* 	- at 30 seconds, you get the boss (enemy spites stop, boss appears)
 	
-GRAPHICS
+###TODO: GRAPHICS
 	* one more enemy
 	* regular bullet
 	* machinegun bullet
@@ -70,7 +59,7 @@ GRAPHICS
 	* play again button
 
 
-SOUNDS
+###TODO: SOUNDS
 	* bullet - player shoot
 	* 	- if time, different sounds for each gun
 	* explosions for player
