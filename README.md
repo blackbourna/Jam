@@ -1,21 +1,15 @@
 Jam
 
 ===
-*AJ* - 01-26 @ 7:44pm
-Updated TODO list below with current status.
+*AJ* - 01-27 @ early
 
-===
-*AJ* - 01-26 @ 1:56am
-Hi, thought I'd share a loose spec for the shooter to give some direction.
-
-Made some work assignments below to what we're working on/refining now.
 
 ###GAME OVER
 	* Heart stops beating (background) with scream. Then explodes.
 
 ###GRAPHICS
-	* background that scrolls down (simulating ship moving forward)
-	* heart is the "environment"/background, the ship is inside the heart 
+	* DONE background that scrolls down (simulating ship moving forward)
+	* KINDA DONE heart is the "environment"/background, the ship is inside the heart 
 	  (veiny inside heart stuff, blood flowing, heart beating)
 
 ###PLAYER
@@ -35,21 +29,44 @@ Made some work assignments below to what we're working on/refining now.
 		explosions
 		sounds
 
-###TODO
-	* CREATE TRELLO BOARD FOR COMPLETION
-	* DONE -- player can move up/down/left/right
-	* DONE -- background images 
-	* SEMI DONE -- sprite assets (player(DONE)/enemies(need more)/powerups(DONE))
-	* DONE -- background movement (scroll down) -- DONE
-	* DONE -- change dimensions to thin long vertical rectangle -- DONE
-	* DONE -- spec out POWERUPS -- (top of main.js)
+###TODO: GAMEPLAY
 	
-	* collision with player  -- not sure where this went - needs testing
-	* calculate score
-	* display score
-	* set level length (time? progress?)
-	* difficulty increases each level (speed of enemies)
+	* collision with player (from enemy/bullet) 
+	* 	- TODO: audible/visual notification when you get hit
+	* 	- TODO: exposion when he dies
+	* 	- TODO: Refine collision detection 
+			- powerups are too difficult to get
+			- enemies are too easy to hit	
+	* set level length (time)
+	* 	- at 30 seconds, you get the boss (enemy spites stop, boss appears)
 	
+###TODO: GRAPHICS
+	* one more enemy
+	* regular bullet
+	* machinegun bullet
+	* double gun bullet
+	* spread gun bullet
+	* fire gun bullet
+	* boss
+	* boss bullet
+	* enemy bullet 1
+	* enemy bullet 2
+	* enemy explosion
+	* player explosion
+	* boss death
+	* game over (you died) banner
+	* game over (congrats killed boss) banner
+	* play again button
+
+
+###TODO: SOUNDS
+	* bullet - player shoot
+	* 	- if time, different sounds for each gun
+	* explosions for player
+	* explosion for enemy
+	* boss noise
+	* background "song"
+	* background "boss song"
 
 	
 ===
