@@ -34,6 +34,7 @@ Main = function() {
             {src: imgDir+"fireballGunPowerUp.png", id:"fireballGun"},
             {src: imgDir+"background_like_a_mofo.png", id: "background"},
             {src: imgDir+"background_like_a_mofo.png", id: "background2"},
+	    {src: imgDir+"title.png", id: "title"},
             {src: sndDir+"hit.mp3|"+sndDir+"hit.ogg", id:"hit"}
         ];
         
@@ -72,8 +73,7 @@ PreloaderHandler = function(manifest, stage) {
     this.handleComplete = function (event) {
         //triggered when all loading is complete
         stage.removeChild(progressText);
-        //new MainMenu(stage).show();
-        new Game(stage);
+        new MainMenu(stage).show();
     }
 
     this.handleFileLoad = function(event) {
@@ -105,13 +105,12 @@ PreloaderHandler = function(manifest, stage) {
 
 MainMenu = function(stage) {
     this.show = function() {
-        var startText = new Text('BEGIN!!!!!', "24px Arial", Constants.TEXT_COLOR);
-        startText.maxWidth = 100;
-        startText.x = stage.canvas.width/2 - startText.maxWidth/2;
-        startText.y = stage.canvas.height/2;
-        stage.addChild(startText);
+	var title = sprites.title;
+        title.x = 40;
+        title.y = 150;
+        stage.addChild(title);
         
-        startText.onClick = function() {
+        title.onClick = function() {
             stage.removeAllChildren();
             new Game(stage);
         }
