@@ -34,7 +34,15 @@ Main = function() {
             {src: imgDir+"fireballGunPowerUp.png", id:"fireballGun"},
             {src: imgDir+"background_like_a_mofo.png", id: "background"},
             {src: imgDir+"background_like_a_mofo.png", id: "background2"},
-            {src: sndDir+"hit.mp3|"+sndDir+"hit.ogg", id:"hit"}
+            {src: sndDir+"hit.mp3|"+sndDir+"hit.ogg", id:"hit"},
+			 //boss sprites
+			 {src: imgDir+"boss_empty.png", id:"boss_empty"},
+			 {src: imgDir+"boss_death.png", id:"boss_death"},
+			 {src: imgDir+"boss_bottom_right.png", id:"boss_bottom_right"},
+			 {src: imgDir+"boss_middle.png", id:"boss_middle"},
+			 {src: imgDir+"boss_bottom_left.png", id:"boss_bottom_left"},
+			 {src: imgDir+"boss_top_left.png", id:"boss_top_left"},
+			 {src: imgDir+"boss_top_right.png", id:"boss_top_right"}
         ];
         
         var preloader = new PreloadJS();
