@@ -33,8 +33,8 @@ Main = function() {
             {src: imgDir+"doubleGunPowerUp.png", id:"doubleGun"},
             {src: imgDir+"spreadGunPowerUp.png", id:"spreadGun"},
             {src: imgDir+"fireballGunPowerUp.png", id:"fireballGun"},
-            {src: sndDir+"hit.mp3|"+sndDir+"hit.ogg", id:"hit"},
-            {src: imgDir+"background_6084x1024.png", id: "background"}
+            {src: imgDir+"background_8706x1024_half-size.png", id: "background"},
+                 {src: sndDir+"hit.mp3|"+sndDir+"hit.ogg", id:"hit"}
         ];
         
         var preloader = new PreloadJS();
@@ -122,10 +122,7 @@ MainMenu = function(stage) {
 Game = function(stage) {
     var gameObjects = [];
     Globals.gameObjects = gameObjects;
-
     var background = new Background(stage);
-
-
     var player = new Player(stage);
     Globals.player = player;
     var levelhandler = new LevelHandler(stage, this);
@@ -148,7 +145,7 @@ Game = function(stage) {
                 stage.update();
             }
         );
-		hud.text = "Lives: " + Globals.player.lives + " Score: " + Globals.player.getScore() + " Health: " + Globals.player.health + " Weapon: " + Globals.player.bulletText;
+		hud.text = "Lives: " + Globals.player.lives + " Score: " + Globals.player.getScore() + " Health: " + Globals.player.health + " Weapon: " + Globals.player.bulletInfo.name;
     };
     this.addGameObject = function(obj) {
         gameObjects.push(obj);
@@ -156,27 +153,26 @@ Game = function(stage) {
 }
 
 Background = function(stage) {
-
-
     var sprite = sprites.background;
-    var y = -6200 + 1024;///sprites.background.height
-    var x = 0;///sprites.background.height
+	//sprite.scaleX = 1.1;
+    var y = -sprite.image.height+stage.canvas.height;
+    var x = 0;
     var background_vector = 4;
     var superawesomevariableCheese = 1.01;
     var notsoawesomeFormage = 1.1;
-
-    goog.object.extend(this, new GameObject(stage, sprite, this, 0, y));
+    goog.object.extend(this, new GameObject(stage, sprite, this, x, y, 0, 0));
+	sprite.setTransform(x, y, 2.1);
+	var xSum = 0;
     this.update = function(e){
 
-        y += background_vector;
-        sprite.x += Math.cos(y/50)*2;
-        notsoawesomeFormage *= superawesomevariableCheese;
+		sprite.x = -Math.abs(Math.cos(sprite.y/50)) * 2;
+		notsoawesomeFormage *= superawesomevariableCheese;
         notsoawesomeFormage = notsoawesomeFormage > 100 ? 1:notsoawesomeFormage;
-        sprite.y += Math.abs(Math.cos(y/100))*notsoawesomeFormage;
-        if (sprite.y > -100) {
-            sprite.y = -6000;
+        sprite.y += Math.abs(Math.cos(sprite.y/100))*notsoawesomeFormage;
+        if (sprite.y > 0) {
+            sprite.y = -sprite.image.height+stage.canvas.height;
         }
-        console.log(sprite.y);
+		sprite.y += background_vector;
     }   
 
     Globals.gameObjects.push(this);
@@ -184,7 +180,7 @@ Background = function(stage) {
 
 }
 
-GameObject = function(stage, sprite, obj, opt_x, opt_y) {
+GameObject = function(stage, sprite, obj, opt_x, opt_y, opt_regX, opt_regY) {
     if (!sprite || !stage) {
         alert('Arg missing in GameObject(stage, sprite, opt_x, opt_y)');
     }
@@ -195,15 +191,15 @@ GameObject = function(stage, sprite, obj, opt_x, opt_y) {
         sprite.y = opt_y;
     }
 	this.id = ids++;
-	sprite.regX = 50;
-	sprite.regY = 50;
+	sprite.regX = opt_regX == null ? 50 : opt_regX;
+	sprite.regY = opt_regY == null ? 50 : opt_regY;
 	this.health = 1;
 	this.hit = function(damage) {
         this.health -= damage;
 		if (this.health < 1) {
 			//console.log(obj.id, obj.tag);
             stage.removeChild(sprite);
-            console.log(goog.array.remove(Globals.gameObjects, obj));
+            goog.array.remove(Globals.gameObjects, obj);
 		}
 	}
     stage.addChild(sprite);
@@ -216,13 +212,9 @@ Player = function(stage, opt_x, opt_y) {
 	var startPt = {x:stage.canvas.width/2, y:stage.canvas.height * 0.95};
     goog.object.extend(this, new GameObject(stage, sprite, this, startPt.x, startPt.y))
     this.health = 100;
-    var bullet_type = "standardGun";  // initialize with standard bullet
-	this.bulletText=bullet_type;
+	this.bulletInfo = BulletInfo[0];
 	this.lives = 3;
-    var bullet_level = 1;
-    var bullet_dir = 0;
     var subObjects = [];
-    var fire_rate = 10;
     var last_fired = Ticker.getTicks();
     var bullet_vector = -10;
     var ship_speed = 10;
@@ -238,8 +230,8 @@ Player = function(stage, opt_x, opt_y) {
         });
     }
 
-	this.powerUp = function(powerUpSpriteName) {
-		bullet_type = powerUpSpriteName;
+	this.powerUp = function(level, powerUpSpriteName) {
+		this.bulletInfo = BulletInfo[level];
 	}
 
     this.update = function(e) {
@@ -265,54 +257,52 @@ Player = function(stage, opt_x, opt_y) {
         if (keydown.down && sprite.y <= (canvas.height - sprite.image.height / 2)) {
             sprite.y += ship_speed;
         }
-
-        /* BULLET POWERUPS */
-
-        // TODO: 
-        // Make powerup drop type random
-        // Move "bullet_dir" to the powerup object, then assign to "bullet_level" on collision
-        // 
-
         
-        
-        switch (bullet_type) {
-            case "machineGun":
-                fire_rate = 0.1;
-                if (bullet_dir == 2) {
-                    bullet_dir = -2;
-                } else {
-                    bullet_dir = 2;  
-                }
-                break;
-            case "doubleGun":
-                fire_rate = 10;
-                if (bullet_dir == 3) {
-                    bullet_dir = -3;
-                } else if (bullet_dir == -3) {
-                   bullet_dir = 0;  
-                } else {
-                    bullet_dir =3;
-                }
-                break;
-            case "spreadGun":
-                fire_rate = 10;
-                break;
-            case "fireballGun":
-                fire_rate = 10;
-                break;
-            default:    // standardGun
-                fire_rate = 10;
-                bullet_dir =0;
-                break;
-        }
+        //switch (bullet_type) {
+        //    case "machineGun": // this gun is awesome, and we should figure out how to keep it in
+        //        fire_rate = 0.1;
+        //        if (bullet_dir == 2) {
+        //            bullet_dir = -2;
+		//			// potential structure like this for design bullet types?
+		//			for (var b in bulletInfo[bulletLevel]) {
+		//				
+		//			}
+        //        } else {
+        //            bullet_dir = 2;  
+        //        }
+        //        break;
+        //    case "doubleGun":
+        //        fire_rate = 10;
+        //        if (bullet_dir == 3) {
+        //            bullet_dir = -3;
+        //        } else if (bullet_dir == -3) {
+        //           bullet_dir = 0;  
+        //        } else {
+        //            bullet_dir =3;
+        //        }
+        //        break;
+        //    case "spreadGun": 
+        //        fire_rate = 10;
+        //        break;
+        //    case "fireballGun":
+        //        fire_rate = 10;
+        //        break;
+        //    default:    // standardGun
+        //        fire_rate = 10;
+        //        bullet_dir =0;
+        //        break;
+        //}
 
         /* SHOOTING MAD BULLETS */
 
-        if (keydown.space && Ticker.getTicks() - last_fired >= (fire_rate)) {
-            console.log("firerate ", fire_rate);
-            console.log("bulletType ", bullet_type);
+        if (keydown.space && Ticker.getTicks() - last_fired >= this.bulletInfo.rate) {
+            console.log("bulletType ", this.bulletInfo);
             SoundJS.play('hit');
-            subObjects.push(new Bullet(stage, sprite, bullet_dir, bullet_vector, bullet_level));
+			for (var i = 0; i < this.bulletInfo.x.length; i++) {
+				var bulletX = this.bulletInfo.x[i];
+				var bulletY = this.bulletInfo.y[i];
+				subObjects.push(new Bullet(stage, sprite, bulletX, bulletY, this.bulletInfo.damage));
+			}
             last_fired = Ticker.getTicks();
         }
 
@@ -347,31 +337,23 @@ Player = function(stage, opt_x, opt_y) {
 }
 
 PowerUp = function(stage, sprite_origin, powerup_vector) {
-    var randomSpriteIndex = Math.floor(Math.random() * (4 - 1 + 1)) + 1;
+    var randomSpriteIndex = Math.floor(Math.random() * BulletInfo.length);
+	if (randomSpriteIndex == 0) {
+		return;
+	}
+	var gunSprites = [
+		null, // stdGun has no sprite
+		sprites.machineGun,
+		sprites.doubleGun,
+		sprites.spreadGun,
+		sprites.fireballGun,
+	]
+	console.log("PowerUp: ",randomSpriteIndex);
     var randomSpriteName = bullet_types[randomSpriteIndex];
-
-    switch (randomSpriteName){
-        case "machineGun":
-            var sprite = goog.object.clone(sprites.machineGun);
-            break;
-        case "doubleGun":
-            var sprite = goog.object.clone(sprites.doubleGun);
-            break;
-        case "spreadGun":
-            var sprite = goog.object.clone(sprites.spreadGun);
-            break;
-        case "fireballGun":
-            var sprite = goog.object.clone(sprites.fireballGun);
-            break;
-        default:
-            var sprite = goog.object.clone(sprites.standardGun);
-            break;
-    }
-
-    sprite.scaleX = 1;
-	sprite.scaleY = 1;
+	var sprite = goog.object.clone(gunSprites[randomSpriteIndex]);
+	Globals.player.bulletText = randomSpriteName;
     var x = Math.random() * 924 + 100;
-    var y = -20;
+    var y = -10;
     goog.object.extend(this, new GameObject(stage, sprite, this, x, y));
     var self = this;
     this.tag = "PowerUp - " + randomSpriteName;
@@ -379,12 +361,7 @@ PowerUp = function(stage, sprite_origin, powerup_vector) {
     this.update = function(e) {
 		if (!enabled) return;
         sprite.y += powerup_vector;
-        sprite.x = sprite.x + (5 * Math.cos(sprite.y/20));
-		sprite.scaleX += scale * 5;
-		sprite.scaleY += scale;
-		if (sprite.scaleY > 0.75 || sprite.scaleY < 0.5) {
-			scale *= -1;
-		}
+        sprite.x = sprite.x + (3 * Math.cos(sprite.y/180));
         if (sprite.y > stage.canvas.height) {
 			self.hit(1);
 			return;
@@ -393,20 +370,57 @@ PowerUp = function(stage, sprite_origin, powerup_vector) {
 		var pt = sprite.globalToLocal(playerSprite.x, playerSprite.y);
 		if (sprite.hitTest(pt.x, pt.y)) {
 			self.hit(1);
-			Globals.player.powerUp(randomSpriteName);
+			Globals.player.powerUp(randomSpriteIndex, randomSpriteName);
 			enabled = false;
 		}
     }
 	var enabled = true;
 }
+BulletInfo = [
+	//0
+	{
+		name: "standardGun",
+		x:[0],
+		y:[-10],
+		damage:5,
+		rate: 10
+	},
+	//1
+	{
+		name: "machineGun",
+		x:[0],
+		y:[-10],
+		damage:5,
+		rate: 10
+	},
+	//2
+	{
+		name: "doubleGun",
+		x:[-1, 1,],
+		y:[-10,-10],
+		damage:5,
+		rate: 10
+	},
+	//3
+	{
+		name: "spreadGun",
+		x:[-5, 0, 5],
+		y:[-10,-10,-10],
+		damage:5,
+		rate: 7
+	},
+	//4
+	{
+		name: "fireballGun",
+		x: [0.5, 0, 0.5],
+		y: [-10,-10,-10],
+		damage:5,
+		rate: 1
+	}
+]
 
-Bullet = function(stage, sprite_origin, bullet_x, bullet_y, bullet_level, opt_damage) {
+Bullet = function(stage, sprite_origin, bullet_x, bullet_y, opt_damage) {
     var sprite = goog.object.clone(sprites.bullet);
-    // if (bullet_level == 1) {
-    //     var sprite = goog.object.clone(sprites.bullet);
-    // } else {
-    //     var sprite = goog.object.clone(sprites.bullet);//change the texture of the laser
-    // }
 	sprite.scaleY = 0.25;
     //var x = sprite_origin.x + sprite_origin.image.width / 3;
     //var y = sprite_origin.y - sprite_origin.image.height / 1.5;
@@ -444,7 +458,6 @@ BaseEnemy = function(stage, sprite, self, sprite_origin) {
 	this.damage = 10; // default damage
     var fire_rate = 25; // default fire rate
     var last_fired = Ticker.getTicks();
-	this.bullet_level = 0;
 	this.baseUpdate = function() {
 		sprite.x += this.ship_speed.x;
 		sprite.y += this.ship_speed.y;
@@ -467,16 +480,16 @@ BaseEnemy = function(stage, sprite, self, sprite_origin) {
 		if (player.getSprite().hitTest(pt.x, pt.y)) {
 			player.hit(this.damage);
 		}
-        if (Ticker.getTicks() - last_fired >= (fire_rate / this.bullet_level)) {
+        if (Ticker.getTicks() - last_fired >= fire_rate) {
             SoundJS.play('hit');
-			var bullet = new Bullet(stage, self.getSprite(), 0, 10, this.bullet_level, this.damage)
+			var bullet = new Bullet(stage, self.getSprite(), 0, 10, this.damage)
 			bullet.tag = "EnemyBullet";
             last_fired = Ticker.getTicks();
         }
 	}
 }
 
-SpaceInvaderEnemy = function(stage, sprite_origin, bullet_vector) {
+SpaceInvaderEnemy = function(stage, sprite_origin) {
     var sprite = goog.object.clone(sprites.enemy);
     goog.object.extend(this, new BaseEnemy(stage, sprite, this, {x: sprite_origin, y: -sprite.image.height}))
     this.health = 1;
@@ -484,7 +497,6 @@ SpaceInvaderEnemy = function(stage, sprite_origin, bullet_vector) {
     var self = this;
     this.tag = "SpaceInvaderEnemy";
 	this.points = 500;
-	this.bullet_level = 1;
     this.update = function(e) {
         // check the borders, if hit, reverse the direction and move down
         if (sprite.x >= (1024 - sprite.image.width) || sprite.x <= 0) {
@@ -505,7 +517,7 @@ Enemy = function(stage, xPos) {
 	this.points = 100;
 	this.damage = 25;
     this.update = function(e) {
-		this.ship_speed.x = 10*Math.sin(sprite.y/60)
+		this.ship_speed.x = 10*Math.sin(sprite.y/60);
 		this.ship_speed.y = 5;
         if (sprite.y > stage.canvas.height) {
             stage.removeChild(sprite);
