@@ -1,6 +1,10 @@
 Jam
 
 ===
+*AJ* - 01-26 @ 7:44pm
+Updated TODO list below with current status.
+
+===
 *AJ* - 01-26 @ 1:56am
 Hi, thought I'd share a loose spec for the shooter to give some direction.
 
@@ -32,17 +36,20 @@ Made some work assignments below to what we're working on/refining now.
 		sounds
 
 ###TODO
-	* player can move up/down/left/right  -- AJ
-	* collision with player  -- BRIAN
-	* background images
-	* sprite assets (player/enemies/brups) -- ALEX
-	* background movement (scroll down)
-	* change dimensions to thin long vertical rectangle
+	* CREATE TRELLO BOARD FOR COMPLETION
+	* DONE -- player can move up/down/left/right
+	* DONE -- background images 
+	* SEMI DONE -- sprite assets (player(DONE)/enemies(need more)/powerups(DONE))
+	* DONE -- background movement (scroll down) -- DONE
+	* DONE -- change dimensions to thin long vertical rectangle -- DONE
+	* DONE -- spec out POWERUPS -- (top of main.js)
+	
+	* collision with player  -- not sure where this went - needs testing
 	* calculate score
 	* display score
 	* set level length (time? progress?)
 	* difficulty increases each level (speed of enemies)
-	* spec out POWERUPS
+	
 
 	
 ===
