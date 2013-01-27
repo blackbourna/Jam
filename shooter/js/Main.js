@@ -14,7 +14,7 @@ Main = function() {
     this.init = function() {
         /* Link Canvas */
         this.canvas = document.getElementById('canvas');
-        var stage = new Stage(canvas);
+        var stage = new Stage(this.canvas);
         /* Set The Flash Plugin for browsers that don't support SoundJS */
         SoundJS.FlashPlugin.BASE_PATH = "assets/soundjs_flashplugin";
         if (!SoundJS.checkPlugin(true)) {
@@ -177,7 +177,7 @@ Background = function(stage) {
             sprite2.y =  stage.canvas.height - sprite2.image.height;
         }
 
-        console.log(sprite1.y, sprite2.y)
+        //console.log(sprite1.y, sprite2.y)
     }   
 
     Globals.gameObjects.push(this);

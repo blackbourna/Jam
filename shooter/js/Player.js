@@ -4,7 +4,7 @@ Player = function(stage, opt_x, opt_y) {
 	var startPt = {x:stage.canvas.width/2, y:stage.canvas.height * 0.95};
     goog.object.extend(this, new GameObject(stage, sprite, this, startPt.x, startPt.y))
     this.health = 100;
-	this.bulletInfo = BulletInfo[0];
+	this.bulletInfo = BulletInfo[4];
 	this.lives = 3;
     var subObjects = [];
     var last_fired = Ticker.getTicks();
@@ -13,10 +13,13 @@ Player = function(stage, opt_x, opt_y) {
     var self = this;
     this.tag = "Player";
 	var points = 0;
-	this.addPoints = function(x) {
+	
+    this.addPoints = function(x) {
 		points += x;
 	}
-	this.getScore = function() {return points;}
+	
+    this.getScore = function() {return points;}
+    
     this.getBullets = function() { return goog.array.filter(subObjects, function(obj) {
             return obj.tag == "Bullet";
         });
@@ -93,7 +96,8 @@ Player = function(stage, opt_x, opt_y) {
 			for (var i = 0; i < this.bulletInfo.x.length; i++) {
 				var bulletX = this.bulletInfo.x[i];
 				var bulletY = this.bulletInfo.y[i];
-				subObjects.push(new Bullet(stage, sprite, bulletX, bulletY, this.bulletInfo.damage));
+                var bulletStartPosition = {x: this.bulletInfo.startPositionX[i] + sprite.x, y: sprite.y};
+				subObjects.push(new Bullet(stage, bulletStartPosition, bulletX, bulletY, this.bulletInfo.damage));
 			}
             last_fired = Ticker.getTicks();
         }
