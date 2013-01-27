@@ -133,8 +133,9 @@ Game = function(stage) {
     var background = new Background(stage);
     var player = new Player(stage);
     Globals.player = player;
-    var levelhandler = new LevelHandler(stage, this);
-    gameObjects.push(levelhandler);
+    //var levelhandler = new LevelHandler(stage, this);
+    //gameObjects.push(levelhandler);
+	gameObjects.push(new Boss(stage));
 	var hud = new Text("", "20px Arial", "#FFFFFF");
 	hud.y = 20;
 	stage.addChild(hud);

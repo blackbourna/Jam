@@ -29,12 +29,14 @@ BaseEnemy = function(stage, sprite, self, sprite_origin) {
         if (player.getSprite().hitTest(pt.x, pt.y)) {
             player.hit(this.damage);
         }
-        if (Ticker.getTicks() - last_fired >= fire_rate) {
-            SoundJS.play('hit');
-            var bullet = new Bullet(stage, self.getSprite(), 0, 10, this.damage)
-            bullet.tag = "EnemyBullet";
-            last_fired = Ticker.getTicks();
-        }
+		if (this.autofire){
+			if (Ticker.getTicks() - last_fired >= fire_rate) {
+				SoundJS.play('hit');
+				var bullet = new Bullet(stage, self.getSprite(), 0, 10, this.damage)
+				bullet.tag = "EnemyBullet";
+				last_fired = Ticker.getTicks();
+			}
+		}
     }
 }
 
@@ -125,10 +127,10 @@ Boss = function(stage){
 	};
 	this.mode = {//basic,laser, heatguided
 		basic: {
-				base_shot_interval : 30,//50 frames between shots
-				base_shot_variance: 10,//30 frame variance
-				shot_interval : 30,
-				mode_interval : 500,
+				base_shot_interval : 25,//25 frames between shots
+				base_shot_variance: 10,//10 frame variance
+				shot_interval : 0,
+				mode_interval : 600,
 				sub_mode_interval: 10,
 				bounce_direction : 1,
 				anger_timeout_base: 200,//200 frames until you can bump anger again
@@ -178,11 +180,11 @@ Boss = function(stage){
 					self.health -= (damage/3) | 1;
 					self.damage_timeout = 5;
 					if (self.health < 1) {
-						self.replaceSprite("boss_dead");	
+						self.replaceSprite("boss_death");	
 						self.resetMode("shake");
 					}
 					else {
-						self.replaceSprite("boss_empty");
+						self.replaceSprite("boss_death");
 					}
 
 				},
@@ -192,8 +194,8 @@ Boss = function(stage){
 			},
 		shake : {
 			mode_interval : 200,
-			update : function(head){
-					var mode = head.mode.basic;
+			update : function(){
+					var mode = self.mode.basic;
 					sprite.x += Math.floor(Math.random()*30)-15;
 				},
 			next_mode : function(){
@@ -208,7 +210,7 @@ Boss = function(stage){
 			base_shot_interval : 1,//50 frames between shots
 			base_shot_variance: 0,//30 frame variance
 			shot_interval : 1,
-			mode_interval : 60,
+			mode_interval : 80,
 			update : function(self){
 					var mode = self.mode.basic;
 					sprite.x += Math.floor(Math.random()*30)-15;
@@ -266,6 +268,8 @@ Boss = function(stage){
 				}
 			mode_shot_counter++;
 			mode_counter++;
+			console.log(mode_counter);
+			console.log(activemode.mode_interval);
 			if (mode_shot_counter > activemode.shot_interval){
 				//spawn basic shot
 				if (activemode.fire_bullet){
@@ -276,11 +280,9 @@ Boss = function(stage){
 			}
 			if (mode_counter > activemode.mode_interval){
 				this.resetMode(activemode.next_mode());
-				
 			}
 		}
 
-		
         //if (this.sprite.y > stage.canvas.height) {
           //  stage.removeChild(this.sprite);
         //    goog.array.remove(Globals.gameObjects, self);
@@ -294,8 +296,9 @@ Boss = function(stage){
     };
 	
 	this.resetMode = function(mode){
-		this.mode_counter = 0;
-		this.active_mode = mode;
+		mode_counter = 0;
+		self.active_mode = mode;
+		console.log(mode);
 	};
 	
 	this.hit = function(damage) {
