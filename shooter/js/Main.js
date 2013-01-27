@@ -108,6 +108,9 @@ Game = function(stage) {
     Globals.player = player;
     var levelhandler = new LevelHandler(stage, this);
     gameObjects.push(levelhandler);
+	var hud = new Text("", "20px Arial", "#FFFFFF");
+	hud.y = 20;
+	stage.addChild(hud);
     ///* Ticker */
     var ticker = new Object();
     Ticker.setFPS(Constants.FRAME_RATE);
@@ -123,6 +126,7 @@ Game = function(stage) {
                 stage.update();
             }
         );
+		hud.text = "Lives: " + Globals.player.lives + " Score: " + Globals.player.getScore() + " Health: " + Globals.player.health + " Weapon: " + "weapon name goes here";
     };
     this.addGameObject = function(obj) {
         gameObjects.push(obj);
@@ -148,18 +152,20 @@ GameObject = function(stage, sprite, obj, opt_x, opt_y) {
 		if (this.health < 1) {
 			console.log(obj.id, obj.tag);
             stage.removeChild(sprite);
-            goog.array.remove(Globals.gameObjects, obj);
+            console.log(goog.array.remove(Globals.gameObjects, obj));
 		}
 	}
     stage.addChild(sprite);
     this.getSprite = function() { return sprite; }
+	Globals.gameObjects.push(obj);
 }
 
 Player = function(stage, opt_x, opt_y) {
     var sprite = sprites.player;
-    var center = Util.getCenter(stage, sprite);
-    goog.object.extend(this, new GameObject(stage, sprite, this, center.x, stage.canvas.height * 0.95))
-    var health = 1;
+	var startPt = {x:stage.canvas.width/2, y:stage.canvas.height * 0.95};
+    goog.object.extend(this, new GameObject(stage, sprite, this, startPt.x, startPt.y))
+    this.health = 100;
+	this.lives = 3;
     var bullet_level = 1;
     var bullet_dir = 0;
     var subObjects = [];
@@ -169,7 +175,11 @@ Player = function(stage, opt_x, opt_y) {
     var ship_speed = 10;
     var self = this;
     this.tag = "Player";
-
+	var points = 0;
+	this.addPoints = function(x) {
+		points += x;
+	}
+	this.getScore = function() {return points;}
     this.getBullets = function() { return goog.array.filter(subObjects, function(obj) {
             return obj.tag == "Bullet";
         });
@@ -239,7 +249,7 @@ Player = function(stage, opt_x, opt_y) {
 
         if (keydown.space && Ticker.getTicks() - last_fired >= (fire_rate / bullet_level)) {
             SoundJS.play('hit');
-            subObjects.push(new Bullet(stage, sprite, bullet_vector, bullet_dir, bullet_level));
+            subObjects.push(new Bullet(stage, sprite, bullet_dir, bullet_vector, bullet_level));
             last_fired = Ticker.getTicks();
         }
 
@@ -248,15 +258,29 @@ Player = function(stage, opt_x, opt_y) {
                 obj.getSprite().x > stage.canvas.width ||
                 obj.getSprite().y < 0 ||
                 obj.getSprite().y > stage.canvas.height) {
-					console.log(this.id, this.tag);
 					obj.hit(1);
                     goog.array.remove(subObjects, obj);
             }
             
         });
+		this.hit = function(damage) {
+			this.health -= damage;
+			if (this.health < 1) {
+				//console.log(obj.id, obj.tag);
+				//stage.removeChild(sprite);
+				//goog.array.remove(Globals.gameObjects, obj);
+				//Tween.get(sprite).to(startPt, 500);
+				this.health = 100;
+				this.lives--;
+				if (this.lives < 0) {
+					alert('game over assface');
+					this.lives = 3;
+				}
+				sprite.x = startPt.x;
+				sprite.y = startPt.y;
+			}
+		}
     }
-
-    Globals.gameObjects.push(this);
 }
 
 PowerUp = function(stage, sprite_origin, powerup_vector) {
@@ -291,88 +315,111 @@ PowerUp = function(stage, sprite_origin, powerup_vector) {
 		}
     }
 	var enabled = true;
-    Globals.gameObjects.push(this);
 }
 
-Bullet = function(stage, sprite_origin, bullet_vector, bullet_dir, bullet_level) {
+Bullet = function(stage, sprite_origin, bullet_x, bullet_y, bullet_level, opt_damage) {
     if (bullet_level == 1) {
     var sprite = goog.object.clone(sprites.bullet);
     } else {
       var sprite = goog.object.clone(sprites.bullet);//change the texture of the laser
     }
 	sprite.scaleY = 0.25;
-    var x = sprite_origin.x + sprite_origin.image.width/3;
-    var y = sprite_origin.y - sprite_origin.image.height/1.5;
+    var x = sprite_origin.x + sprite.image.width;
+    var y = sprite_origin.y - sprite.image.height;
     var self = this;
     SoundJS.play('hit');
     this.tag = "Bullet";
     goog.object.extend(this, new GameObject(stage, sprite, this, x, y))
     this.update = function(e) {
-        sprite.x+= bullet_dir;
-        sprite.y += bullet_vector;
-        if (sprite.x < 0 || 
-            sprite.x > stage.canvas.width ||
-            sprite.y < 0 ||
-            sprite.y > stage.canvas.height) {
+        sprite.x += bullet_x;
+        sprite.y += bullet_y;
+        if (sprite.y < 0 || sprite.y > stage.canvas.height) {
 			self.hit(1);
         }
+		if (this.tag == "EnemyBullet") {
+			var player = Globals.player;
+			var pt = player.getSprite().globalToLocal(sprite.x, sprite.y);
+			if (player.getSprite().hitTest(pt.x, pt.y)) {
+				player.hit(opt_damage);
+				self.hit(1);
+			}
+		}
     }
-    Globals.gameObjects.push(this);
+}
+
+BaseEnemy = function(stage, sprite, self, sprite_origin) {
+	goog.object.extend(this, new GameObject(stage, sprite, self, sprite_origin.x, sprite_origin.y))
+	var dead = false;
+	this.damage = 10; // default damage
+    var fire_rate = 10; // default fire rate
+    var last_fired = Ticker.getTicks();
+	this.bullet_level = 0;
+	this.baseUpdate = function() {
+		sprite.x += this.ship_speed.x;
+		sprite.y += this.ship_speed.y;
+        if (sprite.y > stage.canvas.height) {
+			self.hit(10000);
+        }
+		// player bullet hit detection
+        var bullets = Globals.player.getBullets();
+        goog.array.map(bullets, function(obj) {
+            var bulletSprite = obj.getSprite();
+            var pt = sprite.globalToLocal(bulletSprite.x, bulletSprite.y);
+            //console.log(bulletSprite.x, bulletSprite.y, obj.getSprite());
+            if (sprite.hitTest(pt.x, pt.y) && !dead) {
+				self.hit(1);
+				Globals.player.addPoints(self.points);
+            }
+        });
+		var player = Globals.player;
+		var pt = player.getSprite().globalToLocal(sprite.x, sprite.y);
+		if (player.getSprite().hitTest(pt.x, pt.y)) {
+			player.hit(this.damage);
+		}
+        if (Ticker.getTicks() - last_fired >= (fire_rate / this.bullet_level)) {
+            SoundJS.play('hit');
+			var bullet = new Bullet(stage, self.getSprite(), 0, 10, this.bullet_level, this.damage)
+			bullet.tag = "EnemyBullet";
+            last_fired = Ticker.getTicks();
+        }
+	}
 }
 
 SpaceInvaderEnemy = function(stage, sprite_origin, bullet_vector) {
     var sprite = goog.object.clone(sprites.enemy);
-    var center = Util.getCenter(stage, sprite);
-    goog.object.extend(this, new GameObject(stage, sprite, this, center.x, stage.canvas.height * 0.05))
-    var health = 1;
-    var ship_speed = {x: 10, y: 100};
+    goog.object.extend(this, new BaseEnemy(stage, sprite, this, {x: sprite_origin, y: -sprite.image.height}))
+    this.health = 1;
+    this.ship_speed = {x: 10, y: 0};
     var self = this;
     this.tag = "SpaceInvaderEnemy";
+	this.points = 500;
+	this.bullet_level = 1;
     this.update = function(e) {
-        sprite.x -= ship_speed.x;
-
         // check the borders, if hit, reverse the direction and move down
         if (sprite.x >= (1024 - sprite.image.width) || sprite.x <= 0) {
-            ship_speed.x *= -1;
-            sprite.y += ship_speed.y;
-        }
-        
-        if (sprite.y > stage.canvas.height) {
-			self.hit(1);
-        }
-        var bullets = Globals.player.getBullets();
-        goog.array.map(bullets, function(obj) {
-            var bulletSprite = obj.getSprite();
-            var pt = sprite.globalToLocal(bulletSprite.x, bulletSprite.y);
-            //console.log(bulletSprite.x, bulletSprite.y, obj.getSprite());
-            if (sprite.hitTest(pt.x, pt.y)) {
-				self.hit(1);
-            }
-        });
+            this.ship_speed.x *= -1;
+            this.ship_speed.y = 100;
+        } else {
+			this.ship_speed.y = 0;
+		}
+		this.baseUpdate();
     }
-    Globals.gameObjects.push(this);
 }
-Enemy = function(stage, opt_x, opt_y) {
+Enemy = function(stage, xPos) {
     var sprite = goog.object.clone(sprites.enemy);
     var self = this;
-    goog.object.extend(this, new GameObject(stage, sprite, this, opt_x, -sprite.image.height));
+    goog.object.extend(this, new BaseEnemy(stage, sprite, this, {x: xPos, y: -sprite.image.height}));
     this.tag = "Enemy";
+	this.ship_speed = {x: 0, y: 0};
+	this.points = 100;
+	this.damage = 25;
     this.update = function(e) {
-        sprite.y += 10;
-		sprite.x += (10*Math.sin(sprite.y/180))
+		this.ship_speed.x = 10*Math.sin(sprite.y/60)
+		this.ship_speed.y = 5;
         if (sprite.y > stage.canvas.height) {
             stage.removeChild(sprite);
             goog.array.remove(Globals.gameObjects, self);
         }
-        var bullets = Globals.player.getBullets();
-        goog.array.map(bullets, function(obj) {
-            var bulletSprite = obj.getSprite();
-            var pt = sprite.globalToLocal(bulletSprite.x, bulletSprite.y);
-            //console.log(bulletSprite.x, bulletSprite.y, obj.getSprite());
-            if (sprite.hitTest(pt.x, pt.y)) {
-				self.hit(1);
-            }
-        });
+        this.baseUpdate();
     }
-    Globals.gameObjects.push(this);
 }
