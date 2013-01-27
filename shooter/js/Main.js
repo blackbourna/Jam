@@ -32,7 +32,7 @@ Main = function() {
             {src: imgDir+"doubleGunPowerUp.png", id:"doubleGun"},
             {src: imgDir+"spreadGunPowerUp.png", id:"spreadGun"},
             {src: imgDir+"fireballGunPowerUp.png", id:"fireballGun"},
-            {src: imgDir+"background_8706x1024_half-size.png", id: "background"},
+            {src: imgDir+"background_like_a_mofo.png", id: "background"},
                  {src: sndDir+"hit.mp3|"+sndDir+"hit.ogg", id:"hit"}
         ];
         
