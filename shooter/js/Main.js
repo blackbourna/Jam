@@ -33,7 +33,8 @@ Main = function() {
             {src: imgDir+"spreadGunPowerUp.png", id:"spreadGun"},
             {src: imgDir+"fireballGunPowerUp.png", id:"fireballGun"},
             {src: imgDir+"background_like_a_mofo.png", id: "background"},
-                 {src: sndDir+"hit.mp3|"+sndDir+"hit.ogg", id:"hit"}
+            {src: imgDir+"background_like_a_mofo.png", id: "background2"},
+            {src: sndDir+"hit.mp3|"+sndDir+"hit.ogg", id:"hit"}
         ];
         
         var preloader = new PreloadJS();
@@ -152,30 +153,36 @@ Game = function(stage) {
 }
 
 Background = function(stage) {
-    var sprite = sprites.background;
-	//sprite.scaleX = 1.1;
-    var y = -sprite.image.height+stage.canvas.height;
-    var x = 0;
-    var background_vector = 4;
-    var superawesomevariableCheese = 1.01;
-    var notsoawesomeFormage = 1.1;
-    goog.object.extend(this, new GameObject(stage, sprite, this, x, y, 0, 0));
-	sprite.setTransform(x, y, 2.1);
-	var xSum = 0;
-    this.update = function(e){
+    var sprite1 = goog.object.clone(sprites.background);
+    var sprite2 = goog.object.clone(sprites.background2);
+    
+    var bgSprites = [sprite1, sprite2];
+    
+    var sprite1y = stage.canvas.height - sprite1.image.height;
+    var sprite2y = stage.canvas.height - sprite2.image.height - sprite1.image.height;
+    
+    var background_vector = 20;
+    goog.object.extend(this, new GameObject(stage, sprite1, this, 0, sprite1y, 0, 0));
+    goog.object.extend(this, new GameObject(stage, sprite2, this, 0, sprite2y, 0, 0));
+	
+    this.update = function(e) {
 
-		sprite.x = -Math.abs(Math.cos(sprite.y/50)) * 2;
-		notsoawesomeFormage *= superawesomevariableCheese;
-        notsoawesomeFormage = notsoawesomeFormage > 100 ? 1:notsoawesomeFormage;
-        sprite.y += Math.abs(Math.cos(sprite.y/100))*notsoawesomeFormage;
-        if (sprite.y > 0) {
-            sprite.y = -sprite.image.height+stage.canvas.height;
+        sprite1.y += background_vector;
+        sprite2.y += background_vector;
+
+        if (sprite1.y > 0) {
+            sprite1.y = stage.canvas.height - sprite1.image.height;
         }
-		sprite.y += background_vector;
+        if (sprite2.y > 0) {
+            sprite2.y =  stage.canvas.height - sprite2.image.height;
+        }
+
+        console.log(sprite1.y, sprite2.y)
     }   
 
     Globals.gameObjects.push(this);
-    this.getSprite = function() { return sprite; }
+    
+    this.getSprite = function() { return curr; }
 
 }
 
