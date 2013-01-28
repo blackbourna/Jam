@@ -89,7 +89,7 @@ Boss = function(stage){
     this.ship_speed = {x: 0, y: 1};
     this.points = 100;
     this.damage = 10;
-	this.health = 1000;
+	this.health = 10;
 	this.auto_fire= false;
 	this.sprites = {
 		empty :			goog.object.clone(sprites.boss_empty),
@@ -163,7 +163,7 @@ Boss = function(stage){
 					if (sprite.x + sprite.image.width > 750){
 						mode.bounce_direction = -1;
 					}
-					else if (sprite.x < -100){
+					else if (sprite.x < 100){
 						mode.bounce_direction = 1;
 					}
 					

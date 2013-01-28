@@ -38,6 +38,9 @@ Player = function(stage, opt_x, opt_y) {
             sprite.x += ship_speed;
         }
         
+        console.log(keydown);
+        //BulletInfo[level]
+        
         // move left, don't go past left border
         if (keydown.left && sprite.x >= sprite.image.width) {
             sprite.x -= ship_speed;
@@ -51,6 +54,18 @@ Player = function(stage, opt_x, opt_y) {
         // move down, don't go past bottom border
         if (keydown.down && sprite.y <= (canvas.height - sprite.image.height / 2)) {
             sprite.y += ship_speed;
+        }
+        
+        if (keydown[0]) {
+            this.bulletInfo = BulletInfo[0];
+        } else if (keydown[1]) {
+            this.bulletInfo = BulletInfo[1];
+        } else if (keydown[2]) {
+            this.bulletInfo = BulletInfo[2];
+        } else if (keydown[3]) {
+            this.bulletInfo = BulletInfo[3];
+        } else if (keydown[4]) {
+            this.bulletInfo = BulletInfo[4];
         }
         
         //switch (bullet_type) {
