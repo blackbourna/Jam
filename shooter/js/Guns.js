@@ -23,7 +23,7 @@ BulletInfo = [
 	//2
 	{
 		name: "doubleGun",
-		x:[0, 0],
+		x:[-5, 5],
 
 		y:[-10,-10],
 		damage: 5,
@@ -34,11 +34,11 @@ BulletInfo = [
 	//3
 	{
 		name: "spreadGun",
-		x:[-5, 0, 5],
-		y:[-10,-10,-10],
+		x:[-10, -5, 0, 5, 10],
+		y:[-10,-10,-10,-10,-10],
 		damage: 5,
 		rate: 7,
-		startPositionX: [0, 0, 0]
+		startPositionX: [0, 0, 0, 0, 0]
 
 	},
 	//4

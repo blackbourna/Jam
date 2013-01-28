@@ -11,14 +11,13 @@ var delay = 50;
 var enemyFactor = 0.5;
 var powerupdelay = 0;
 var powerupDelta = 0;
-var bossEntryDelta = 25;
+var bossEntryDelta = 250
 var bossActive = false;
 
 LevelHandler = function(stage, game) {
     this.update = function(e) {
 		if (bossActive)
 			return;
-		//console.log(Ticker.getTicks());
 		if (Ticker.getTicks() > bossEntryDelta){
 			bossActive = true;
 			Globals.gameObjects.push(new Boss(stage));
