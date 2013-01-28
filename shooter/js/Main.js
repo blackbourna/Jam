@@ -1,5 +1,7 @@
 var sprites = [];
 var ids = 0;
+var imgDir = "assets/image/";
+var sndDir = "assets/audio/";
 // Channelling CONTRA http://strategywiki.org/wiki/Contra/Weapons
 // standardRifle = no rapid fire, have to mash the space bar to fire (can't hold down key for continuous fire)
 // machineGun = rapid fire, can hold down space bar to fire continuously (find a nice balance so it's not just a wall of bullets)
@@ -14,15 +16,13 @@ Main = function() {
     this.init = function() {
         /* Link Canvas */
         this.canvas = document.getElementById('canvas');
-        var stage = new Stage(canvas);
+        var stage = new Stage(this.canvas);
         /* Set The Flash Plugin for browsers that don't support SoundJS */
-        SoundJS.FlashPlugin.BASE_PATH = "assets/soundjs_flashplugin";
-        if (!SoundJS.checkPlugin(true)) {
-          alert("Error!");
-          return;
-        }
-        var imgDir = "assets/image/";
-        var sndDir = "assets/audio/";
+        //SoundJS.FlashPlugin.BASE_PATH = "assets/soundjs_flashplugin";
+        //if (!SoundJS.checkPlugin(true)) {
+        //  alert("Error!");
+        //  return;
+        //}
         var manifest = [
             {src: imgDir+"spaceship_new_64.png", id:"player"},
 			//{src: imgDir+"enemyship.png", id:"enemy"},
@@ -35,11 +35,19 @@ Main = function() {
             {src: imgDir+"background_like_a_mofo.png", id: "background"},
             {src: imgDir+"background_like_a_mofo.png", id: "background2"},
 	    {src: imgDir+"title.png", id: "title"},
-            {src: sndDir+"hit.mp3|"+sndDir+"hit.ogg", id:"hit"}
+            {src: sndDir+"hit.mp3|"+sndDir+"hit.ogg", id:"hit"},
+			 //boss sprites
+			 {src: imgDir+"boss_empty.png", id:"boss_empty"},
+			 {src: imgDir+"boss_death.png", id:"boss_death"},
+			 {src: imgDir+"boss_bottom_right.png", id:"boss_bottom_right"},
+			 {src: imgDir+"boss_middle.png", id:"boss_middle"},
+			 {src: imgDir+"boss_bottom_left.png", id:"boss_bottom_left"},
+			 {src: imgDir+"boss_top_left.png", id:"boss_top_left"},
+			 {src: imgDir+"boss_top_right.png", id:"boss_top_right"}
         ];
-        
+		var audio = new Audio(sndDir+"song/song.wav").play();
         var preloader = new PreloadJS();
-        preloader.installPlugin(SoundJS);
+        //preloader.installPlugin(SoundJS);
         var preloadHandler = new PreloaderHandler(manifest, stage);
         preloader.onProgress = preloadHandler.handleProgress;
         preloader.onComplete = preloadHandler.handleComplete;
@@ -74,6 +82,11 @@ PreloaderHandler = function(manifest, stage) {
         //triggered when all loading is complete
         stage.removeChild(progressText);
         new MainMenu(stage).show();
+        //new MainMenu(stage).show();
+			//alert(sndDir+"sfx/gunC.mp3|"+sndDir+"sfx/gunC.ogg");
+			//SoundJS.play('flameGunMP3');
+			//console.log("SOUNDJS");
+			//	console.log(SoundJS);
     }
 
     this.handleFileLoad = function(event) {
@@ -176,7 +189,7 @@ Background = function(stage) {
             sprite2.y =  stage.canvas.height - sprite2.image.height;
         }
 
-        console.log(sprite1.y, sprite2.y)
+        //console.log(sprite1.y, sprite2.y)
     }   
 
     Globals.gameObjects.push(this);

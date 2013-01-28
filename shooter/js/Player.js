@@ -1,4 +1,3 @@
-
 Player = function(stage, opt_x, opt_y) {
     var sprite = sprites.player;
 	var startPt = {x:stage.canvas.width/2, y:stage.canvas.height * 0.95};
@@ -13,10 +12,13 @@ Player = function(stage, opt_x, opt_y) {
     var self = this;
     this.tag = "Player";
 	var points = 0;
+
 	this.addPoints = function(x) {
 		points += x;
 	}
+
 	this.getScore = function() {return points;}
+
     this.getBullets = function() { return goog.array.filter(subObjects, function(obj) {
             return obj.tag == "Bullet";
         });
@@ -27,7 +29,8 @@ Player = function(stage, opt_x, opt_y) {
 	}
 
     this.update = function(e) {
-        
+        var canvas = stage.canvas;
+
         /* PLAYER MOVEMENT */
 
         // move right, don't go past right border
@@ -88,12 +91,16 @@ Player = function(stage, opt_x, opt_y) {
         /* SHOOTING MAD BULLETS */
 
         if (keydown.space && Ticker.getTicks() - last_fired >= this.bulletInfo.rate) {
-            console.log("bulletType ", this.bulletInfo);
-            SoundJS.play('hit');
+            //console.log("bulletType ", this.bulletInfo);
+
 			for (var i = 0; i < this.bulletInfo.x.length; i++) {
 				var bulletX = this.bulletInfo.x[i];
 				var bulletY = this.bulletInfo.y[i];
-				subObjects.push(new Bullet(stage, sprite, bulletX, bulletY, this.bulletInfo.damage));
+
+				subObjects.push(new Bullet(stage, sprite, bulletX, bulletY, this.bulletInfo.damage, this.bulletInfo.sfx));
+				var audio = new Audio(sndDir+"sfx/"+this.bulletInfo.sfx+".wav").play();
+				//console.log(sndDir+"sfx/"+this.bulletInfo.sfx+".wav");
+				//audio.play();
 			}
             last_fired = Ticker.getTicks();
         }
@@ -118,7 +125,8 @@ Player = function(stage, opt_x, opt_y) {
 				this.health = 100;
 				this.lives--;
 				if (this.lives < 0) {
-					alert('game over assface');
+					alert('thank you for playing :D');
+
 					this.lives = 3;
 				}
 				sprite.x = startPt.x;
