@@ -17,9 +17,9 @@ Main = function() {
         /* Link Canvas */
         this.canvas = document.getElementById('canvas');
         var stage = new Stage(this.canvas);
-        /* Set The Flash Plugin for browsers that don't support SoundJS */
-        //SoundJS.FlashPlugin.BASE_PATH = "assets/soundjs_flashplugin";
-        //if (!SoundJS.checkPlugin(true)) {
+        /* Set The Flash Plugin for browsers that don't support //SoundJS */
+        ////SoundJS.FlashPlugin.BASE_PATH = "assets///SoundJS_flashplugin";
+        //if (!//SoundJS.checkPlugin(true)) {
         //  alert("Error!");
         //  return;
         //}
@@ -47,7 +47,7 @@ Main = function() {
         ];
 		var audio = new Audio(sndDir+"song/song.wav").play();
         var preloader = new PreloadJS();
-        //preloader.installPlugin(SoundJS);
+        //preloader.installPlugin(//SoundJS);
         var preloadHandler = new PreloaderHandler(manifest, stage);
         preloader.onProgress = preloadHandler.handleProgress;
         preloader.onComplete = preloadHandler.handleComplete;
@@ -84,9 +84,9 @@ PreloaderHandler = function(manifest, stage) {
         new MainMenu(stage).show();
         //new MainMenu(stage).show();
 			//alert(sndDir+"sfx/gunC.mp3|"+sndDir+"sfx/gunC.ogg");
-			//SoundJS.play('flameGunMP3');
-			//console.log("SOUNDJS");
-			//	console.log(SoundJS);
+			////SoundJS.play('flameGunMP3');
+			//console.log("//SoundJS");
+			//	console.log(//SoundJS);
     }
 
     this.handleFileLoad = function(event) {

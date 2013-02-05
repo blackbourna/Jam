@@ -11,7 +11,7 @@ var delay = 50;
 var enemyFactor = 0.5;
 var powerupdelay = 0;
 var powerupDelta = 0;
-var bossEntryDelta = 250
+var bossEntryDelta = 500;
 var bossActive = false;
 
 LevelHandler = function(stage, game) {

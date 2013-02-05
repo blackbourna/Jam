@@ -22,7 +22,7 @@ BaseEnemy = function(stage, sprite, self, sprite_origin) {
             if (sprite.hitTest(pt.x, pt.y) && !dead) {
                 self.hit(1);
                 Globals.player.addPoints(self.points);
-				SoundJS.play('hurtPlayerMP3');
+				//SoundJS.play('hurtPlayerMP3');
             }
         });
         var player = Globals.player;
@@ -32,7 +32,7 @@ BaseEnemy = function(stage, sprite, self, sprite_origin) {
         }
 		if (this.autofire){
 			if (Ticker.getTicks() - last_fired >= fire_rate) {
-				SoundJS.play('hit');
+				//SoundJS.play('hit');
 				var bullet = new Bullet(stage, self.getSprite(), 0, 10, this.damage)
 				bullet.tag = "EnemyBullet";
 				last_fired = Ticker.getTicks();

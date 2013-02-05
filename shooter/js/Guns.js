@@ -106,7 +106,7 @@ Bullet = function(stage, sprite_origin, bullet_x, bullet_y, opt_damage) {
     
     var self = this;
     var booster = 1;
-    SoundJS.play('hit');
+    //SoundJS.play('hit');
     this.tag = "Bullet";
     goog.object.extend(this, new GameObject(stage, sprite, this, x, y));
 
